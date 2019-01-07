@@ -31,23 +31,26 @@ public class Game extends javafx.application.Application {
   private static final int FRAME_HEIGHT = 768;
   private JFrame frame;
   private JPanel panel;
-  private JLabel label, mainMenu;
+  private JLabel label, mainMenu, bgLabel, headLabel, nameLabel;
   private ImageIcon secretImage, mainScreenBG, playButtonImage, creditsButtonImage, exitButtonImage, playHoveredImage, creditsHoveredImage, exitHoveredImage, skipIntroButtonImage,
   skipIntroHoveredImage, intro1Image, companyLogo, titleScreen, intro2Image, intro3Image, intro4Image, intro5Image, intro6Image, intro7Image, intro8Image, intro9Image, intro10Image, 
-  intro11Image, intro12Image, intro13Image, chapter1Image, tutorial1Image, tutorialProphecyImage;
+  intro11Image, intro12Image, intro13Image, chapter1Image, tutorial1Image, tutorialClosedProphecyImage, tutorialOpenProphecyImage, tutorialTransitionImage, jtHeadImage, rudyHeadImage, 
+  allanHeadImage;
   private JButton play, credits, exit, secretButt, skipIntro;
   private static MediaPlayer mediaPlayer;
   private SpringLayout layout;
-  private JTextArea textArea;
+  private JTextArea textArea, dialogueArea;
   private int stringCounter = 0;
-  private boolean introSkipped;
+  private boolean introSkipped, animationFinished;
   
   //private JSlider slider;
   
+  //constructor initializes all images and actionlisteners and starts the game at the menu screen
   public Game() {    
     frame = new JFrame();
     panel = new JPanel();
-    secretImage = new ImageIcon( getClass().getResource( "resources/Secret_Image.png" ) );
+    bgLabel = new JLabel();
+    secretImage = new ImageIcon( getClass().getResource( "resources/harden.jpg" ) );
     mainScreenBG = new ImageIcon( getClass().getResource( "resources/Main_Screen_Image.gif" ) );
     playButtonImage = new ImageIcon( getClass().getResource( "resources/play button.png"  ) );
     creditsButtonImage = new ImageIcon( getClass().getResource( "/resources/credits button.png" ) );
@@ -74,7 +77,12 @@ public class Game extends javafx.application.Application {
     companyLogo = new ImageIcon( getClass().getResource( "resources/0_company.gif" ) );
     titleScreen = new ImageIcon( getClass().getResource( "resources/0.5_title.gif" ) );
     tutorial1Image = new ImageIcon( getClass().getResource( "resources/1_tutorial.gif" ) );
-    tutorialProphecyImage = new ImageIcon( getClass().getResource( "resources/1.1_tutorial.gif" ) );
+    tutorialClosedProphecyImage = new ImageIcon( getClass().getResource( "resources/1.1_closed.gif" ) );
+    tutorialOpenProphecyImage = new ImageIcon( getClass().getResource( "resources/1.1_tutorial.gif" ) );
+    jtHeadImage = new ImageIcon( getClass().getResource( "resources/JT_head.gif" ) );
+    rudyHeadImage = new ImageIcon( getClass().getResource( "resources/Rudy_head.gif" ) );
+    allanHeadImage = new ImageIcon( getClass().getResource( "resources/Allan_head.gif" ) );
+    tutorialTransitionImage = new ImageIcon( getClass().getResource( "resources/2_tutorial.gif" ) );
     play = new JButton( playButtonImage );
     credits = new JButton( creditsButtonImage );
     exit = new JButton( exitButtonImage );
@@ -83,6 +91,7 @@ public class Game extends javafx.application.Application {
     mainMenu = new JLabel( mainScreenBG );
     label = new FadeLabel( "Main_Screen_Image.gif", "0_company.gif" );
     textArea = new JTextArea( 2, 20 );
+    dialogueArea = new JTextArea( 2, 20 );
     setButtonTransparent( play );
     setButtonTransparent( credits );
     setButtonTransparent( exit );
@@ -102,7 +111,16 @@ public class Game extends javafx.application.Application {
     textArea.setLineWrap( true );
     textArea.setEditable( false );
     textArea.setFocusable( false );
-    
+    dialogueArea.setPreferredSize( new Dimension( 850, 100 ) );
+    dialogueArea.setBackground( new Color( 5, 16, 88 ) );
+    dialogueArea.setForeground( new Color( 249, 253, 168 ) );
+    dialogueArea.setOpaque( true );
+    dialogueArea.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 249, 253, 168 ), 2, true ), 
+        BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 57, 249, 191 ), 5, true ), BorderFactory.createEmptyBorder( 10, 5, 5, 5 ) ) ) );
+    dialogueArea.setWrapStyleWord( true );
+    dialogueArea.setLineWrap( true );
+    dialogueArea.setEditable( false );
+    dialogueArea.setFocusable( false );
     
     GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
@@ -285,6 +303,7 @@ public class Game extends javafx.application.Application {
   }
   
   //handles the starting of the intro
+  //timers are used to mimic a story-cutscene
   private void startIntro() {
     layout.putConstraint( SpringLayout.NORTH, skipIntro, 5, SpringLayout.NORTH, panel );
     skipIntro.setVisible( true );
@@ -309,17 +328,19 @@ public class Game extends javafx.application.Application {
     layout.putConstraint( SpringLayout.WEST, textArea, 183, SpringLayout.WEST, panel );
     layout.putConstraint( SpringLayout.NORTH, textArea, 618, SpringLayout.NORTH, panel );
     textArea.setVisible( true );
-    animateText( "This is Allan. He works as a professional League of Legends player for the Shanghai Sharks. "
-        + "Recently his life has been getting quite boring, and he's wondering how his childhood friends are doing.", 15 );
+    layout.putConstraint( SpringLayout.WEST, dialogueArea, 333, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, dialogueArea, 618, SpringLayout.NORTH, panel );
+    animateText( "This is Allan. Recently his life has been getting quite boring, and he's wondering how his childhood friends are doing.", 15 );
     textArea.setFont( new Font( "Pixel-Noir", Font.PLAIN, 15 ) );
+    dialogueArea.setFont( new Font( "Pixel-Noir", Font.PLAIN, 15 ) );
     panel.revalidate();
     Timer t = new Timer( 6250, new ActionListener() {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
           textArea.setText( "" );
-          animateText( "After dealing with the mental anxiety that comes with being a professional gamer, coupled with the low quality"
-              + " internet spewing out of his busted router, Allan has decided to end it all...", 15 );
+          animateText( "After dealing with the smoggy air that comes with living in China, coupled with the low quality internet spewing out of "
+              + "his busted router, Allan has decided to end it all...", 15 );
         }
       }
     });
@@ -338,7 +359,7 @@ public class Game extends javafx.application.Application {
             @Override
             public void actionPerformed( ActionEvent e ) {
               textArea.setVisible( true );
-              animateText( "...so he quit his profession and decided to venture out into the great beyond.", 25 );
+              animateText( "...so he packed his bags and decided to venture out into the great beyond.", 25 );
             }
           });
           tempTimer.setRepeats( false );
@@ -394,8 +415,7 @@ public class Game extends javafx.application.Application {
           panel.add( new JLabel( intro6Image ) );
           textArea.setVisible( true );
           panel.revalidate();
-          animateText( "Allan wonders why none of his friends have ever kept in touch with him as of recently. He texts the boys "
-              + "back at Irvine with no avail. So that was it, his first destination to reunite with the squad.", 15 );
+          animateText( "Allan wonders why none of his friends have ever kept in touch with him as of recently. He texts the boys back at Irvine with no avail.", 15 );
         }
       }
     });
@@ -473,7 +493,8 @@ public class Game extends javafx.application.Application {
           panel.add( new JLabel( intro11Image ) );
           textArea.setVisible( true );
           panel.revalidate();
-          animateText( "The train ride back to the motherland was very nostalgic. Allan breathes in the fresh air he once knew as a child and relishes it.", 25 );
+          animateText( "The train ride back to the motherland was very nostalgic. Allan breathes in the fresh air he once knew as a child and relishes it. "
+              + "He wonders if his friends still live nearby.", 25 );
         }
       }
     });
@@ -522,6 +543,7 @@ public class Game extends javafx.application.Application {
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
           panel.remove( panel.getComponent( 2 ) );
+          panel.remove( skipIntro );
           panel.add( new JLabel( chapter1Image ) );
           panel.revalidate();
           panel.addMouseListener( new MouseAdapter() {
@@ -545,9 +567,59 @@ public class Game extends javafx.application.Application {
     t.start();
   }
   
+  //starts the tutorial section of the game
   private void startTutorial() {
-    MouseListener [] arr = panel.getMouseListeners();
-    panel.removeMouseListener( arr[ 0 ] );
+    setNewSong( "tutorial_song" );
+    JTextArea prophecyText = new JTextArea( "To: Allan\r\n" + 
+        "From: Chris Lee\r\n" + 
+        "\r\n" + 
+        "Allan if you are reading this we are in grave danger...\r\n" + 
+        "All of us have been enslaved by the evil conglomerate because we tried to defend our nuggets.\r\n" + 
+        "I only have time to write a couple of clues to each of our whereabouts.\r\n" + 
+        "\r\n" + 
+        "Rudraksha is in the realm of shadows\r\n" + 
+        "Jonathan is looking for some strange fruit near a bright light\r\n" + 
+        "Nick is way ahead of time\r\n" + 
+        "Jason is a weeb\r\n" + 
+        "Ryan is fishing somewhere\r\n" + 
+        "And I am being held up in Comp..." );
+    prophecyText.setPreferredSize( new Dimension( 275, 250 ) );
+    prophecyText.setOpaque( false );
+    prophecyText.setFocusable( false );
+    prophecyText.setEditable( false );
+    prophecyText.setWrapStyleWord( true );
+    prophecyText.setLineWrap( true );
+    prophecyText.setFont( new Font( "Pixel-Noir", Font.PLAIN, 7 ) );
+    prophecyText.setBorder( BorderFactory.createEmptyBorder( 2, 0, 0, 0 ) );
+    layout.putConstraint( SpringLayout.WEST, prophecyText, 550, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, prophecyText, 200, SpringLayout.NORTH, panel );
+    panel.add( prophecyText );
+    prophecyText.setVisible( false );
+    bgLabel = new JLabel( tutorial1Image );
+    headLabel = new JLabel( allanHeadImage );    
+    nameLabel = new JLabel( "Allan" );
+    nameLabel.setPreferredSize( new Dimension( 100, 40  ) );
+    nameLabel.setFont( new Font( "Pixel-Noir", Font.BOLD, 18 ) );
+    nameLabel.setOpaque( true );
+    nameLabel.setForeground( Color.BLUE );
+    nameLabel.setBackground( Color.GREEN );
+    nameLabel.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color ( 249, 253, 168 ), 5, true ), BorderFactory.createEmptyBorder( 20, 15, 0, 0 ) ) );
+    headLabel.setPreferredSize( new Dimension( 150, 150 ) );
+    headLabel.setBackground( Color.LIGHT_GRAY );
+    headLabel.setOpaque( true );
+    headLabel.setBorder( BorderFactory.createLineBorder( new Color( 249, 253, 168 ), 5, true ) );
+    layout.putConstraint( SpringLayout.WEST, headLabel, 183, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, headLabel, 568, SpringLayout.NORTH, panel );
+    panel.add( headLabel );
+    headLabel.setVisible( false );
+    layout.putConstraint( SpringLayout.WEST, nameLabel, 333, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, nameLabel, 578, SpringLayout.NORTH, panel );
+    panel.add( nameLabel );
+    nameLabel.setVisible( false );
+    int [] stageCnt = { 0 }; //used to track the number of user clicks to know which stage to advance to and also to bypass final error
+    removePanelMouseListener();
+    panel.add( dialogueArea );
+    dialogueArea.setVisible( false );
     panel.remove( panel.getComponent( 1 ) );
     label = new FadeLabel( "14_chapter.gif", "1_tutorial.gif", 3000 );
     label.setPreferredSize( new Dimension( 1366, 768 ) );
@@ -558,12 +630,74 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         panel.remove( label );
-        panel.add( new JLabel( tutorial1Image ) );
+        panel.add( bgLabel );
+        dialogueArea.setVisible( true );
+        headLabel.setVisible( true );
+        nameLabel.setVisible( true );
         panel.revalidate();
+        animateText( "Damn that flight was long... finally made it back to Irvine.\r\n", 50, dialogueArea );
       }
     });
     t.setRepeats( false );
     t.start();
+    panel.addMouseListener( new MouseAdapter() {
+      @Override
+      public void mouseClicked( MouseEvent evt ) {
+        if( stageCnt[ 0 ] == 0 && animationFinished ) {
+          animationFinished = false;
+          final Timer tempTimer = new Timer( 50, null );
+          tempTimer.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent evt ) {
+              String s = "Huh what's this?";
+              dialogueArea.append( "" + s.charAt( stringCounter ) );
+              stringCounter++;
+              if( stringCounter >= s.length() ) {
+                tempTimer.stop();
+                stringCounter = 0;
+                animationFinished = true;
+              }
+            }
+          });
+          tempTimer.start();
+          stageCnt[ 0 ]++;
+        } else if( stageCnt[ 0 ] == 1 && animationFinished ) {
+          animationFinished = false;
+          //panel.remove( panel.getComponent( 1 ) );
+          bgLabel.setIcon( tutorialClosedProphecyImage );
+          //panel.add( bgLabel );
+          dialogueArea.setVisible( false );
+          headLabel.setVisible( false );
+          nameLabel.setVisible( false );
+          //panel.revalidate();
+          dialogueArea.setText( "" );
+          animationFinished = false;
+          stageCnt[ 0 ]++;
+        } else if( stageCnt[ 0 ] == 2 ) {
+          //panel.remove( panel.getComponent( 1 ) );
+          bgLabel.setIcon( tutorialOpenProphecyImage );
+          prophecyText.setVisible( true );
+          //panel.add( bgLabel );
+          //panel.revalidate();
+          stageCnt[ 0 ]++;
+        } else if( stageCnt[ 0 ] == 3 ) {
+          prophecyText.setFont( new Font( "Pixel-Noir", Font.PLAIN, 8 ) );
+          prophecyText.setText( "*Tutorial\r\n" + 
+              "Thanks for playing adventurer!\r\n" + 
+              "You will be in charge of every move Allan makes in his nast adventure to save his friends.\r\n" + 
+              "Many scenarios will be brought up and you are the one to decide Allan's fate by choosing amongst several options that would be provided. " + 
+              "(use your mouse to select each option)\r\n" + 
+              "Each new area will yield unique challenges and scenarios so don’t get used to a single strategy.\r\n" + 
+              "Also, each area will have a boss you must defeat in order to move on to the next.\r\n" + 
+              "Good luck out there friend, and may the odds be forever in your favor." );
+          stageCnt[ 0 ]++;
+        } else if( stageCnt[ 0 ] == 4 ) {
+          panel.remove( prophecyText );
+          bgLabel.setIcon( tutorialTransitionImage );
+          stageCnt[ 0 ]++;
+        }
+      }
+    });
   }
   
   private void animateText( String text, int time ) {
@@ -584,10 +718,30 @@ public class Game extends javafx.application.Application {
     t.start();
   }
   
+  private void animateText( String text, int time, JTextArea area ) {
+    final Timer t = new Timer( time, null );
+    t.addActionListener( new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        area.setText( text.substring( 0, stringCounter ) );
+        stringCounter++;
+        
+        if( stringCounter > text.length() ) {
+          t.stop();
+          stringCounter = 0;
+          animationFinished = true;
+          return;
+        }
+      }
+    });
+    t.start();
+  }
+  
   private void setButtonTransparent( JButton b ) {
     b.setOpaque( false );
     b.setContentAreaFilled( false );
     b.setBorderPainted( false );
+    b.setFocusable( false );
   }
   
   private void setNewSong( String songName ) {
@@ -677,7 +831,7 @@ public class Game extends javafx.application.Application {
               }
           }
       });
-  }
+    }
     
     public void fadeImages() {
       alpha = 0f;
@@ -707,6 +861,11 @@ public class Game extends javafx.application.Application {
         firstTime = false;
         g2d.dispose();
     }
+  }
+  
+  private void removePanelMouseListener() {
+    MouseListener [] arr = panel.getMouseListeners();
+    panel.removeMouseListener( arr[ 0 ] );
   }
   
   @Override
