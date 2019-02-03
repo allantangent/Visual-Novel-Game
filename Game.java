@@ -15,8 +15,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -31,17 +29,19 @@ public class Game extends javafx.application.Application {
   private static final int FRAME_HEIGHT = 768;
   private JFrame frame;
   private JPanel panel;
-  private JLabel label, mainMenu, bgLabel, headLabel, nameLabel;
-  private ImageIcon secretImage, mainScreenBG, playButtonImage, creditsButtonImage, exitButtonImage, playHoveredImage, creditsHoveredImage, exitHoveredImage, skipIntroButtonImage,
-  skipIntroHoveredImage, intro1Image, companyLogo, titleScreen, intro2Image, intro3Image, intro4Image, intro5Image, intro6Image, intro7Image, intro8Image, intro9Image, intro10Image, 
-  intro11Image, intro12Image, intro13Image, chapter1Image, tutorial1Image, tutorialClosedProphecyImage, tutorialOpenProphecyImage, tutorialTransitionImage, jtHeadImage, rudyHeadImage, 
-  allanHeadImage;
-  private JButton play, credits, exit, secretButt, skipIntro;
+  private JLabel label, mainMenu, bgLabel, headLabel, nameLabel, dialogueLabel, textLabel;
+  private ImageIcon secretImage, mainScreenBG, playButtonImage, creditsButtonImage, exitButtonImage, playHoveredImage, creditsHoveredImage, 
+  exitHoveredImage, skipIntroButtonImage, skipIntroHoveredImage, intro1Image, companyLogo, titleScreen, intro2Image, intro3Image, intro4Image, 
+  intro5Image, intro6Image, intro7Image, intro8Image, intro9Image, intro10Image, intro11Image, intro12Image, intro13Image, chapter1Image, tutorial1Image, 
+  tutorialClosedProphecyImage, tutorialOpenProphecyImage, tutorialTransitionImage, jtHeadImage, rudyHeadImage, allanHeadImage, prophecyTitleImage, chapter11Image;
+  private JButton play, credits, exit, secretButt, skipIntro, choice1, choice2, choice3, choice4, choice5;
   private static MediaPlayer mediaPlayer;
   private SpringLayout layout;
-  private JTextArea textArea, dialogueArea;
-  private int stringCounter = 0;
+  private JTextArea textArea, dialogueArea, prophecyText;
+  private int stringCounter, choiceNum;
   private boolean introSkipped, animationFinished;
+  private int [] stageCnt = { 0 }; //used to track the number of user clicks to know which stage to advance to and also to bypass final error
+
   
   //private JSlider slider;
   
@@ -50,39 +50,41 @@ public class Game extends javafx.application.Application {
     frame = new JFrame();
     panel = new JPanel();
     bgLabel = new JLabel();
-    secretImage = new ImageIcon( getClass().getResource( "resources/harden.jpg" ) );
-    mainScreenBG = new ImageIcon( getClass().getResource( "resources/Main_Screen_Image.gif" ) );
-    playButtonImage = new ImageIcon( getClass().getResource( "resources/play button.png"  ) );
-    creditsButtonImage = new ImageIcon( getClass().getResource( "/resources/credits button.png" ) );
-    exitButtonImage = new ImageIcon( getClass().getResource( "resources/exit button.png" ) );
-    playHoveredImage = new ImageIcon( getClass().getResource( "resources/Play Button Hovered.png" ) );
-    creditsHoveredImage = new ImageIcon( getClass().getResource( "resources/Credits Button Hovered.png" ) );
-    exitHoveredImage = new ImageIcon( getClass().getResource( "resources/Exit Button Hovered.png" ) );
-    skipIntroButtonImage = new ImageIcon( getClass().getResource( "resources/Skip_Intro.png" ) );
-    skipIntroHoveredImage = new ImageIcon( getClass().getResource( "resources/Skip_Intro_Hovered.png" ) );
-    intro1Image = new ImageIcon( getClass().getResource( "resources/1_intro.gif" ) );
-    intro2Image = new ImageIcon( getClass().getResource( "resources/2_intro.gif"  ) );
-    intro3Image = new ImageIcon( getClass().getResource( "resources/3_intro.gif"  ) );
-    intro4Image = new ImageIcon( getClass().getResource( "resources/4_intro.gif"  ) );
-    intro5Image = new ImageIcon( getClass().getResource( "resources/5_intro.gif"  ) );
-    intro6Image = new ImageIcon( getClass().getResource( "resources/6.1_intro.gif"  ) );
-    intro7Image = new ImageIcon( getClass().getResource( "resources/7_intro.gif"  ) );
-    intro8Image = new ImageIcon( getClass().getResource( "resources/8_intro.gif"  ) );
-    intro9Image = new ImageIcon( getClass().getResource( "resources/9_intro.gif"  ) );
-    intro10Image = new ImageIcon( getClass().getResource( "resources/10_intro.gif"  ) );
-    intro11Image = new ImageIcon( getClass().getResource( "resources/11_intro.gif"  ) );
-    intro12Image = new ImageIcon( getClass().getResource( "resources/12_intro.gif"  ) );
-    intro13Image = new ImageIcon( getClass().getResource( "resources/13_intro.gif"  ) );
-    chapter1Image = new ImageIcon( getClass().getResource( "resources/14_chapter.gif" ) );
-    companyLogo = new ImageIcon( getClass().getResource( "resources/0_company.gif" ) );
-    titleScreen = new ImageIcon( getClass().getResource( "resources/0.5_title.gif" ) );
-    tutorial1Image = new ImageIcon( getClass().getResource( "resources/1_tutorial.gif" ) );
-    tutorialClosedProphecyImage = new ImageIcon( getClass().getResource( "resources/1.1_closed.gif" ) );
-    tutorialOpenProphecyImage = new ImageIcon( getClass().getResource( "resources/1.1_tutorial.gif" ) );
-    jtHeadImage = new ImageIcon( getClass().getResource( "resources/JT_head.gif" ) );
-    rudyHeadImage = new ImageIcon( getClass().getResource( "resources/Rudy_head.gif" ) );
-    allanHeadImage = new ImageIcon( getClass().getResource( "resources/Allan_head.gif" ) );
-    tutorialTransitionImage = new ImageIcon( getClass().getResource( "resources/2_tutorial.gif" ) );
+    secretImage = getImageIcon( "Secret_Image.png" );
+    mainScreenBG = getImageIcon( "Main_Screen_Image.gif" );
+    playButtonImage = getImageIcon( "play button.png" );
+    creditsButtonImage = getImageIcon( "credits button.png" );
+    exitButtonImage = getImageIcon( "exit button.png" );
+    playHoveredImage = getImageIcon( "Play Button Hovered.png" );
+    creditsHoveredImage = getImageIcon( "Credits Button Hovered.png" );
+    exitHoveredImage = getImageIcon( "Exit Button Hovered.png" );
+    skipIntroButtonImage = getImageIcon( "Skip_Intro.png" );
+    skipIntroHoveredImage = getImageIcon( "Skip_Intro_Hovered.png" );
+    intro1Image = getImageIcon( "1_intro.gif" );
+    intro2Image = getImageIcon( "2_intro.gif" );
+    intro3Image = getImageIcon( "3_intro.gif" );
+    intro4Image = getImageIcon( "4_intro.gif" );
+    intro5Image = getImageIcon( "5_intro.gif" );
+    intro6Image = getImageIcon( "6.1_intro.gif" );
+    intro7Image = getImageIcon( "7_intro.gif" );
+    intro8Image = getImageIcon( "8_intro.gif" );
+    intro9Image = getImageIcon( "9_intro.gif" );
+    intro10Image = getImageIcon( "10_intro.gif" );
+    intro11Image = getImageIcon( "11_intro.gif" );
+    intro12Image = getImageIcon( "12_intro.gif" );
+    intro13Image = getImageIcon( "13_intro.gif" );
+    chapter1Image = getImageIcon( "14_chapter.gif" );
+    companyLogo = getImageIcon( "0_company.gif" );
+    titleScreen = getImageIcon( "0.5_title.gif" );
+    tutorial1Image = getImageIcon( "1_tutorial.gif" );
+    tutorialClosedProphecyImage = getImageIcon( "1.1_closed.gif" );
+    tutorialOpenProphecyImage = getImageIcon( "1.1_tutorial.gif" );
+    jtHeadImage = getImageIcon( "JT_head.gif" );
+    rudyHeadImage = getImageIcon( "Rudy_head.gif" );
+    allanHeadImage = getImageIcon( "Allan_head.gif" );
+    prophecyTitleImage = getImageIcon( "prophecy transition.gif" );
+    tutorialTransitionImage = getImageIcon( "2_tutorial.gif" );
+    chapter11Image = getImageIcon( "1_chapter1.gif" );
     play = new JButton( playButtonImage );
     credits = new JButton( creditsButtonImage );
     exit = new JButton( exitButtonImage );
@@ -91,7 +93,9 @@ public class Game extends javafx.application.Application {
     mainMenu = new JLabel( mainScreenBG );
     label = new FadeLabel( "Main_Screen_Image.gif", "0_company.gif" );
     textArea = new JTextArea( 2, 20 );
+    textLabel = new JLabel( getImageIcon( "text set.png" ) );
     dialogueArea = new JTextArea( 2, 20 );
+    dialogueLabel = new JLabel( getImageIcon( "dialogue set.png" ) );
     setButtonTransparent( play );
     setButtonTransparent( credits );
     setButtonTransparent( exit );
@@ -102,21 +106,17 @@ public class Game extends javafx.application.Application {
     layout = new SpringLayout();
     panel.setLayout( layout );
     textArea.setPreferredSize( new Dimension( 1000, 100 ) );
-    textArea.setBackground( new Color ( 5, 16, 88 ) );
     textArea.setForeground( new Color( 249, 253, 168 ) );
-    textArea.setOpaque( true );
-    textArea.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 249, 253, 168 ), 2, true ), 
-        BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 57, 249, 191 ) , 5, true ), BorderFactory.createEmptyBorder( 10, 5, 5, 5 ) ) ) );
+    textArea.setOpaque( false );
+    textArea.setBorder( BorderFactory.createEmptyBorder( 5, 0, 0, 30 ) );
     textArea.setWrapStyleWord( true );
     textArea.setLineWrap( true );
     textArea.setEditable( false );
     textArea.setFocusable( false );
     dialogueArea.setPreferredSize( new Dimension( 850, 100 ) );
-    dialogueArea.setBackground( new Color( 5, 16, 88 ) );
     dialogueArea.setForeground( new Color( 249, 253, 168 ) );
-    dialogueArea.setOpaque( true );
-    dialogueArea.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 249, 253, 168 ), 2, true ), 
-        BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 57, 249, 191 ), 5, true ), BorderFactory.createEmptyBorder( 10, 5, 5, 5 ) ) ) );
+    dialogueArea.setOpaque( false );
+    dialogueArea.setBorder( BorderFactory.createEmptyBorder( 5, 0, 0, 5 ) );
     dialogueArea.setWrapStyleWord( true );
     dialogueArea.setLineWrap( true );
     dialogueArea.setEditable( false );
@@ -167,6 +167,8 @@ public class Game extends javafx.application.Application {
     label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
     panel.add( textArea );
     textArea.setVisible( false );
+    panel.add( textLabel );
+    textLabel.setVisible( false );
     panel.add( mainMenu );
     panel.add( skipIntro );
     skipIntro.setVisible( false );
@@ -196,11 +198,21 @@ public class Game extends javafx.application.Application {
       if( evt.getSource().equals( play ) ) {
         play.setIcon( playHoveredImage );
         } else if( evt.getSource().equals( credits ) ) {
-        credits.setIcon( creditsHoveredImage );
+          credits.setIcon( creditsHoveredImage );
         } else if( evt.getSource().equals( exit ) ) {
-        exit.setIcon( exitHoveredImage );
+          exit.setIcon( exitHoveredImage );
         } else if( evt.getSource().equals( skipIntro ) ) {
-        skipIntro.setIcon( skipIntroHoveredImage );
+          skipIntro.setIcon( skipIntroHoveredImage );
+        } else if( evt.getSource().equals( choice1 ) ) {
+          choice1.setIcon( getImageIcon( "greetH.png" ) );
+        } else if( evt.getSource().equals( choice2 ) ) {
+          choice2.setIcon( getImageIcon( "passiveH.png" ) );
+        } else if( evt.getSource().equals( choice3 ) ) {
+          choice3.setIcon( getImageIcon( "nastH.png" ) );
+        }else if( evt.getSource().equals( choice4 ) ) {
+          choice4.setIcon( getImageIcon( "replyH.png" ) );
+        } else if( evt.getSource().equals( choice5 ) ) {
+          choice5.setIcon( getImageIcon( "nastreplyH.png" ) );
         }
       }
     
@@ -209,11 +221,21 @@ public class Game extends javafx.application.Application {
       if( evt.getSource().equals( play ) ) {
         play.setIcon( playButtonImage );
         } else if( evt.getSource().equals( credits ) ) {
-        credits.setIcon( creditsButtonImage );
+          credits.setIcon( creditsButtonImage );
         } else if( evt.getSource().equals( exit ) ) {
-        exit.setIcon( exitButtonImage );
+          exit.setIcon( exitButtonImage );
         } else if( evt.getSource().equals( skipIntro ) ) {
           skipIntro.setIcon( skipIntroButtonImage );
+        } else if( evt.getSource().equals( choice1 ) ) {
+          choice1.setIcon( getImageIcon( "greet.png" ) );
+        } else if( evt.getSource().equals( choice2 ) ) {
+          choice2.setIcon( getImageIcon( "passive.png" ) );
+        } else if( evt.getSource().equals( choice3 ) ) {
+          choice3.setIcon( getImageIcon( "nast.png" ) );
+        } else if( evt.getSource().equals( choice4 ) ) {
+          choice4.setIcon( getImageIcon( "reply.png" ) );
+        } else if( evt.getSource().equals( choice5 ) ) {
+          choice5.setIcon( getImageIcon( "nastreply.png" ) );
         }
       }
     }
@@ -245,7 +267,7 @@ public class Game extends javafx.application.Application {
         timer = new Timer( 12000, new ActionListener() {
           @Override
           public void actionPerformed( ActionEvent arg0 ) {
-            panel.remove( panel.getComponent( 2 ) );
+            panel.remove( panel.getComponent( 3 ) );
             panel.add( new JLabel( titleScreen ) );
             panel.revalidate();
             label = new FadeLabel( "0.5_title.gif", "1_intro.gif", 1000 );
@@ -257,7 +279,7 @@ public class Game extends javafx.application.Application {
         timer = new Timer( timer.getDelay() + 14000, new ActionListener() {
           @Override
           public void actionPerformed( ActionEvent arg0 ) {
-            panel.remove( panel.getComponent( 2 ) );
+            panel.remove( panel.getComponent( 3 ) );
             panel.add( label );
             panel.revalidate();
             ( ( FadeLabel )label ).fadeImages();
@@ -268,7 +290,7 @@ public class Game extends javafx.application.Application {
         timer = new Timer( timer.getDelay() + 1000, new ActionListener() {
           @Override
           public void actionPerformed( ActionEvent arg0 ) {
-            for( int i = 2; i < panel.getComponentCount(); i++ ) {
+            for( int i = 3; i < panel.getComponentCount(); i++ ) {
               panel.remove( panel.getComponent( i ) );
             }
             panel.add( new JLabel( intro1Image ) );
@@ -310,10 +332,11 @@ public class Game extends javafx.application.Application {
     skipIntro.addMouseListener( new MouseAdapter() {
       @Override
       public void mouseClicked( MouseEvent evt ) {
-        panel.remove( panel.getComponent( 2 ) );
+        panel.remove( panel.getComponent( 3 ) );
         panel.remove( skipIntro );
         panel.add( new JLabel( chapter1Image ) );
         textArea.setVisible( false );
+        textLabel.setVisible( false );
         panel.revalidate();
         panel.addMouseListener( new MouseAdapter() {
           @Override
@@ -325,11 +348,13 @@ public class Game extends javafx.application.Application {
         mediaPlayer.stop();
       }
     });
-    layout.putConstraint( SpringLayout.WEST, textArea, 183, SpringLayout.WEST, panel );
-    layout.putConstraint( SpringLayout.NORTH, textArea, 618, SpringLayout.NORTH, panel );
+    placeComponent( 203, 618, textArea );
     textArea.setVisible( true );
-    layout.putConstraint( SpringLayout.WEST, dialogueArea, 333, SpringLayout.WEST, panel );
+    placeComponent( 183, 598, textLabel );
+    textLabel.setVisible( true );
+    layout.putConstraint( SpringLayout.WEST, dialogueArea, 348, SpringLayout.WEST, panel );
     layout.putConstraint( SpringLayout.NORTH, dialogueArea, 618, SpringLayout.NORTH, panel );
+    placeComponent( 183, 563, dialogueLabel );
     animateText( "This is Allan. Recently his life has been getting quite boring, and he's wondering how his childhood friends are doing.", 15 );
     textArea.setFont( new Font( "Pixel-Noir", Font.PLAIN, 15 ) );
     dialogueArea.setFont( new Font( "Pixel-Noir", Font.PLAIN, 15 ) );
@@ -350,15 +375,13 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           textArea.setText( "" );
-          textArea.setVisible( false );
           panel.add( new JLabel( intro2Image ) );
           panel.revalidate();
           Timer tempTimer = new Timer( 500, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-              textArea.setVisible( true );
               animateText( "...so he packed his bags and decided to venture out into the great beyond.", 25 );
             }
           });
@@ -373,9 +396,10 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro3Image ) );
           textArea.setVisible( false );
+          textLabel.setVisible( false );
           textArea.setText( "" );
           panel.revalidate();
         }
@@ -387,7 +411,7 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro4Image ) );
           panel.revalidate();
         }
@@ -399,7 +423,7 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro5Image ) );
           panel.revalidate();
         }
@@ -411,9 +435,10 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro6Image ) );
           textArea.setVisible( true );
+          textLabel.setVisible( true );
           panel.revalidate();
           animateText( "Allan wonders why none of his friends have ever kept in touch with him as of recently. He texts the boys back at Irvine with no avail.", 15 );
         }
@@ -425,9 +450,10 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro7Image ) );
           textArea.setVisible( false );
+          textLabel.setVisible( false );
           textArea.setText( "" );
           panel.revalidate();
         }
@@ -439,13 +465,14 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro8Image ) );
           textArea.setVisible( true );
+          textLabel.setVisible( true );
           panel.revalidate();
           animateText( "Deciding that his life was more enjoyable with the people that respected him, Allan leaves behind his drab "
               + "life to seek out the happiness that has been locked away for so long.", 25 );
-          Timer tempTimer = new Timer( 7000, new ActionListener() {
+          Timer tempTimer = new Timer( 8500, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
               textArea.setText( "" );
@@ -463,9 +490,10 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro9Image ) );
           textArea.setVisible( false );
+          textLabel.setVisible( false );
           textArea.setText( "" );
           panel.revalidate();
         }
@@ -477,7 +505,7 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro10Image ) );
           panel.revalidate();
         }
@@ -489,9 +517,10 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro11Image ) );
           textArea.setVisible( true );
+          textLabel.setVisible( true );
           panel.revalidate();
           animateText( "The train ride back to the motherland was very nostalgic. Allan breathes in the fresh air he once knew as a child and relishes it. "
               + "He wonders if his friends still live nearby.", 25 );
@@ -504,9 +533,10 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro12Image ) );
           textArea.setVisible( false );
+          textLabel.setVisible( false );
           textArea.setText( "" );
           panel.revalidate();
         }
@@ -518,9 +548,10 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.add( new JLabel( intro13Image ) );
           textArea.setVisible( true );
+          textLabel.setVisible( true );
           panel.revalidate();
           animateText( "Irvine's glistening buildings and green trees come into full view as the train comes to a stop.\r\n" + 
               "\r\nWelcome back friend. Welcome back to your roots.\r\n", 35 );
@@ -528,6 +559,7 @@ public class Game extends javafx.application.Application {
             @Override
             public void actionPerformed( ActionEvent e ) {
               textArea.setVisible( false );
+              textLabel.setVisible( false );
               textArea.setText( "" );
             }
           });
@@ -542,7 +574,7 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
-          panel.remove( panel.getComponent( 2 ) );
+          panel.remove( panel.getComponent( 3 ) );
           panel.remove( skipIntro );
           panel.add( new JLabel( chapter1Image ) );
           panel.revalidate();
@@ -570,68 +602,64 @@ public class Game extends javafx.application.Application {
   //starts the tutorial section of the game
   private void startTutorial() {
     setNewSong( "tutorial_song" );
-    JTextArea prophecyText = new JTextArea( "To: Allan\r\n" + 
+    textArea.addMouseListener( new TutorialScreenClickedMouseAdapter() );
+    prophecyText = new JTextArea( "To: Allan\r\n" + 
         "From: Chris Lee\r\n" + 
         "\r\n" + 
         "Allan if you are reading this we are in grave danger...\r\n" + 
         "All of us have been enslaved by the evil conglomerate because we tried to defend our nuggets.\r\n" + 
-        "I only have time to write a couple of clues to each of our whereabouts.\r\n" + 
-        "\r\n" + 
-        "Rudraksha is in the realm of shadows\r\n" + 
-        "Jonathan is looking for some strange fruit near a bright light\r\n" + 
-        "Nick is way ahead of time\r\n" + 
-        "Jason is a weeb\r\n" + 
-        "Ryan is fishing somewhere\r\n" + 
-        "And I am being held up in Comp..." );
-    prophecyText.setPreferredSize( new Dimension( 275, 250 ) );
+        "I only have time to write a couple of clues to each of our whereabouts.");
+    prophecyText.setPreferredSize( new Dimension( 250, 300 ) );
+    prophecyText.addMouseListener( new TutorialScreenClickedMouseAdapter() );
     prophecyText.setOpaque( false );
     prophecyText.setFocusable( false );
     prophecyText.setEditable( false );
     prophecyText.setWrapStyleWord( true );
     prophecyText.setLineWrap( true );
-    prophecyText.setFont( new Font( "Pixel-Noir", Font.PLAIN, 7 ) );
+    prophecyText.setFont( new Font( "Pixel-Noir", Font.PLAIN, 10 ) );
+    prophecyText.setForeground( new Color( 139, 69, 19 ) );
     prophecyText.setBorder( BorderFactory.createEmptyBorder( 2, 0, 0, 0 ) );
     layout.putConstraint( SpringLayout.WEST, prophecyText, 550, SpringLayout.WEST, panel );
-    layout.putConstraint( SpringLayout.NORTH, prophecyText, 200, SpringLayout.NORTH, panel );
+    layout.putConstraint( SpringLayout.NORTH, prophecyText, 150, SpringLayout.NORTH, panel );
     panel.add( prophecyText );
     prophecyText.setVisible( false );
     bgLabel = new JLabel( tutorial1Image );
     headLabel = new JLabel( allanHeadImage );    
     nameLabel = new JLabel( "Allan" );
     nameLabel.setPreferredSize( new Dimension( 100, 40  ) );
-    nameLabel.setFont( new Font( "Pixel-Noir", Font.BOLD, 18 ) );
-    nameLabel.setOpaque( true );
-    nameLabel.setForeground( Color.BLUE );
-    nameLabel.setBackground( Color.GREEN );
-    nameLabel.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color ( 249, 253, 168 ), 5, true ), BorderFactory.createEmptyBorder( 20, 15, 0, 0 ) ) );
+    nameLabel.setFont( new Font( "Pixel-Noir", Font.BOLD, 14 ) );
+    nameLabel.setOpaque( false );
+    nameLabel.setForeground( Color.WHITE );
     headLabel.setPreferredSize( new Dimension( 150, 150 ) );
-    headLabel.setBackground( Color.LIGHT_GRAY );
-    headLabel.setOpaque( true );
-    headLabel.setBorder( BorderFactory.createLineBorder( new Color( 249, 253, 168 ), 5, true ) );
-    layout.putConstraint( SpringLayout.WEST, headLabel, 183, SpringLayout.WEST, panel );
-    layout.putConstraint( SpringLayout.NORTH, headLabel, 568, SpringLayout.NORTH, panel );
+    headLabel.setOpaque( false );
+    layout.putConstraint( SpringLayout.WEST, headLabel, 185, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, headLabel, 560, SpringLayout.NORTH, panel );
     panel.add( headLabel );
     headLabel.setVisible( false );
-    layout.putConstraint( SpringLayout.WEST, nameLabel, 333, SpringLayout.WEST, panel );
-    layout.putConstraint( SpringLayout.NORTH, nameLabel, 578, SpringLayout.NORTH, panel );
+    layout.putConstraint( SpringLayout.WEST, nameLabel, 350, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, nameLabel, 575, SpringLayout.NORTH, panel );
     panel.add( nameLabel );
     nameLabel.setVisible( false );
-    int [] stageCnt = { 0 }; //used to track the number of user clicks to know which stage to advance to and also to bypass final error
     removePanelMouseListener();
     panel.add( dialogueArea );
     dialogueArea.setVisible( false );
-    panel.remove( panel.getComponent( 1 ) );
+    dialogueArea.addMouseListener( new TutorialScreenClickedMouseAdapter() );
+    panel.add( dialogueLabel );
+    dialogueLabel.setVisible( false );
+    panel.remove( panel.getComponent( 2 ) );
     label = new FadeLabel( "14_chapter.gif", "1_tutorial.gif", 3000 );
     label.setPreferredSize( new Dimension( 1366, 768 ) );
     panel.add( label );
     panel.revalidate();
     ( ( FadeLabel )label ).fadeImages();
+    animationFinished = false;
     Timer t = new Timer( 2900, new ActionListener() {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         panel.remove( label );
         panel.add( bgLabel );
         dialogueArea.setVisible( true );
+        dialogueLabel.setVisible( true );
         headLabel.setVisible( true );
         nameLabel.setVisible( true );
         panel.revalidate();
@@ -640,64 +668,302 @@ public class Game extends javafx.application.Application {
     });
     t.setRepeats( false );
     t.start();
-    panel.addMouseListener( new MouseAdapter() {
-      @Override
-      public void mouseClicked( MouseEvent evt ) {
-        if( stageCnt[ 0 ] == 0 && animationFinished ) {
-          animationFinished = false;
-          final Timer tempTimer = new Timer( 50, null );
-          tempTimer.addActionListener( new ActionListener() {
+    panel.addMouseListener( new TutorialScreenClickedMouseAdapter() );
+  }
+
+  private class TutorialScreenClickedMouseAdapter extends MouseAdapter {
+    @Override
+    public void mouseClicked( MouseEvent e ) {
+      if( stageCnt[ 0 ] == 0 && animationFinished ) {
+        animationFinished = false;
+        final Timer tempTimer = new Timer( 50, null );
+        tempTimer.addActionListener( new ActionListener() {
+          @Override
+          public void actionPerformed( ActionEvent evt ) {
+            String s = "Huh what's this?";
+            dialogueArea.append( "" + s.charAt( stringCounter ) );
+            stringCounter++;
+            if( stringCounter >= s.length() ) {
+              tempTimer.stop();
+              stringCounter = 0;
+              animationFinished = true;
+            }
+          }
+        });
+        tempTimer.start();
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 1 && animationFinished ) {
+        animationFinished = false;
+        bgLabel.setIcon( tutorialClosedProphecyImage );
+        dialogueArea.setVisible( false );
+        dialogueLabel.setVisible( false );
+        headLabel.setVisible( false );
+        nameLabel.setVisible( false );
+        dialogueArea.setText( "" );
+        animationFinished = false;
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 2 ) {
+        bgLabel.setIcon( prophecyTitleImage );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 3 ) {
+        bgLabel.setIcon( tutorialOpenProphecyImage );
+        prophecyText.setVisible( true );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 4 ) {
+        prophecyText.setText( "First is thy brown friend, stuck in his past, and unable to leave his own shadow.\r\n" + 
+            "Second is thou large fella, lost in a vastness of green, seeking divine light.\r\n" + 
+            "Third tis be hairier than the rest, opposite of thy first, engulfed in metal.\r\n" + 
+            "Jason is a weeb.\r\n" + 
+            "Fifth is thee strange fisherman, lost at sea, and searching for a massive Dick.\r\n" + 
+            "And finally, thine vile himself, is held captive in ye Dank Gulag, being forced to..." );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 5 ) {
+        prophecyText.setText( "*Tutorial\r\n\r\n" + 
+            "Thanks for playing adventurer!\r\n\r\n" + 
+            "You will be in charge of every move Allan makes in his nast adventure to save his friends.\r\n" + 
+            "Many scenarios will be brought up and you are the one to decide Allan's fate by choosing amongst several options that would be provided. " + 
+            "\r\n(use your mouse to select each option)" );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 6 ) {
+        prophecyText.setText( "Each new area will yield unique challenges and scenarios so don't get used to a single strategy.\r\n" + 
+            "Also, each area will have a boss you must defeat in order to move on to the next.\r\n\r\n" + 
+            "Good luck out there friend, and may the odds be forever in your favor." );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 7 ) { 
+        panel.remove( prophecyText );
+        dialogueArea.setVisible( true );
+        headLabel.setVisible( true );
+        nameLabel.setVisible( true );
+        dialogueLabel.setVisible( true );
+        bgLabel.setIcon( tutorial1Image );
+        panel.revalidate();
+        animateText( "Alright it looks like my boys are in danger.\r\n" + "It seems like Rudraksha is first on the list.\r\n" + 
+        "I wonder where I should look first...", 50, dialogueArea );
+        stageCnt[ 0 ]++;
+      } else if( animationFinished && stageCnt[ 0 ] == 8 ) {
+        animationFinished = false;
+        bgLabel.setIcon( tutorialTransitionImage );
+        headLabel.setVisible( false );
+        nameLabel.setVisible( false );
+        dialogueArea.setVisible( false );
+        dialogueLabel.setVisible( false );
+        dialogueArea.setText( "" );
+        textArea.setText( "" ); //not really sure why needed
+        mediaPlayer.stop();
+        Timer tempT = new Timer( 1000, new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            textArea.setVisible( true );
+            textLabel.setVisible( true );
+            animateText( "Allan decides to begin his adventure by searching for Rudraksha.\r\n" + 
+                "The first place that comes to mind are the local basketball courts.", 35 );
+            stageCnt[ 0 ]++;
+            setNewSong( "sunflower_song" );
+          }
+        });
+        tempT.setRepeats( false );
+        tempT.start();
+      } else if( animationFinished && stageCnt[ 0 ] == 9 ) {
+        textArea.setText( "" );
+        textArea.setVisible( false );
+        textLabel.setVisible( false );
+        animationFinished = false;
+        removePanelMouseListener();
+        startChapter1();
+      }
+    }
+  }
+  
+  private void startChapter1() {
+    resetScreen();
+    frame.add( panel );
+    stageCnt = new int [] { 0 }; //used to keep track of current stage and by pass final error
+    bgLabel.setIcon( chapter11Image );
+    choice1 = new JButton( getImageIcon( "greet.png" ) );
+    choice2 = new JButton( getImageIcon( "passive.png" ) );
+    choice3 = new JButton( getImageIcon( "nast.png" ) );
+    choice4 = new JButton( getImageIcon( "reply.png" ) );
+    choice5 = new JButton( getImageIcon( "nastreply.png" ) );
+    panel.add( choice1 );
+    panel.add( choice2 );
+    panel.add( choice3 );
+    panel.add( choice4 );
+    panel.add( choice5 );
+    placeComponent( 383, 280, choice2 );
+    layout.putConstraint( SpringLayout.WEST, choice1, 338, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.SOUTH, choice1, 0, SpringLayout.NORTH, choice2 );
+    layout.putConstraint( SpringLayout.WEST, choice3, 428, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, choice3, 0, SpringLayout.SOUTH, choice2 );
+    placeComponent( 383, 260, choice4 );
+    layout.putConstraint( SpringLayout.WEST, choice5, 428, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, choice5, 0, SpringLayout.SOUTH, choice4 );
+    setButtonTransparent( choice1 );
+    setButtonTransparent( choice2 );
+    setButtonTransparent( choice3 );
+    setButtonTransparent( choice4 );
+    setButtonTransparent( choice5 );
+    choice1.setVisible( false );
+    choice2.setVisible( false );
+    choice3.setVisible( false );
+    choice4.setVisible( false );
+    choice5.setVisible( false );
+    choice1.addMouseListener( new MenuButtonMouseAdapter() );
+    choice2.addMouseListener( new MenuButtonMouseAdapter() );
+    choice3.addMouseListener( new MenuButtonMouseAdapter() );
+    choice4.addMouseListener( new MenuButtonMouseAdapter() );
+    choice5.addMouseListener( new MenuButtonMouseAdapter() );
+    choice1.addMouseListener( new Chapter1ChoiceHandler() );
+    choice2.addMouseListener( new Chapter1ChoiceHandler() );
+    choice3.addMouseListener( new Chapter1ChoiceHandler() );
+    choice4.addMouseListener( new Chapter1ChoiceHandler() );
+    choice5.addMouseListener( new Chapter1ChoiceHandler() );
+    headLabel.setIcon( jtHeadImage );
+    nameLabel.setText( "JT" );
+    panel.add( bgLabel );
+    panel.revalidate();
+    panel.addMouseListener( new Chapter1ScreenClickedMouseAdapter() );
+    dialogueArea.addMouseListener( new Chapter1ScreenClickedMouseAdapter() );
+    textArea.addMouseListener( new Chapter1ScreenClickedMouseAdapter() );
+  }
+
+  private class Chapter1ScreenClickedMouseAdapter extends MouseAdapter {
+    public void mouseClicked( MouseEvent e ) {
+      if( stageCnt[ 0 ] == 0 ) {
+        headLabel.setVisible( true );
+        nameLabel.setVisible( true );
+        dialogueArea.setVisible( true );
+        dialogueLabel.setVisible( true );
+        animateText( "What are you looking at boy?", 25, dialogueArea );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 1 && animationFinished ) {
+        animationFinished = false;
+        choice1.setVisible( true );
+        choice2.setVisible( true );
+        choice3.setVisible( true );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 3 && animationFinished ) {
+        animationFinished = false;
+        headLabel.setIcon( jtHeadImage );
+        nameLabel.setText( "JT" );
+        dialogueArea.setText( "" );
+
+        if( choiceNum == 1 ) {
+          animateText( "I think I know what you're looking for. Win against me 1v1 and I'll hand it over.", 35, dialogueArea );
+        } else if( choiceNum == 2 ) {
+          animateText( "Yeah that's right, bug off back to China ya asian gremlin.", 35, dialogueArea );
+          Timer tempTimer = new Timer( 2000, new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent evt ) {
-              String s = "Huh what's this?";
-              dialogueArea.append( "" + s.charAt( stringCounter ) );
-              stringCounter++;
-              if( stringCounter >= s.length() ) {
-                tempTimer.stop();
-                stringCounter = 0;
-                animationFinished = true;
-              }
+            public void actionPerformed( ActionEvent e ) {
+              choice4.setVisible( true );
+              choice5.setVisible( true );
             }
           });
+          tempTimer.setRepeats( false );
           tempTimer.start();
-          stageCnt[ 0 ]++;
-        } else if( stageCnt[ 0 ] == 1 && animationFinished ) {
-          animationFinished = false;
-          //panel.remove( panel.getComponent( 1 ) );
-          bgLabel.setIcon( tutorialClosedProphecyImage );
-          //panel.add( bgLabel );
-          dialogueArea.setVisible( false );
-          headLabel.setVisible( false );
-          nameLabel.setVisible( false );
-          //panel.revalidate();
-          dialogueArea.setText( "" );
-          animationFinished = false;
-          stageCnt[ 0 ]++;
-        } else if( stageCnt[ 0 ] == 2 ) {
-          //panel.remove( panel.getComponent( 1 ) );
-          bgLabel.setIcon( tutorialOpenProphecyImage );
-          prophecyText.setVisible( true );
-          //panel.add( bgLabel );
-          //panel.revalidate();
-          stageCnt[ 0 ]++;
-        } else if( stageCnt[ 0 ] == 3 ) {
-          prophecyText.setFont( new Font( "Pixel-Noir", Font.PLAIN, 8 ) );
-          prophecyText.setText( "*Tutorial\r\n" + 
-              "Thanks for playing adventurer!\r\n" + 
-              "You will be in charge of every move Allan makes in his nast adventure to save his friends.\r\n" + 
-              "Many scenarios will be brought up and you are the one to decide Allan's fate by choosing amongst several options that would be provided. " + 
-              "(use your mouse to select each option)\r\n" + 
-              "Each new area will yield unique challenges and scenarios so don’t get used to a single strategy.\r\n" + 
-              "Also, each area will have a boss you must defeat in order to move on to the next.\r\n" + 
-              "Good luck out there friend, and may the odds be forever in your favor." );
-          stageCnt[ 0 ]++;
-        } else if( stageCnt[ 0 ] == 4 ) {
-          panel.remove( prophecyText );
-          bgLabel.setIcon( tutorialTransitionImage );
-          stageCnt[ 0 ]++;
+        } else if( choiceNum == 3 ) {
+          animateText( "What did you say? I didn't quite catch that.", 35, dialogueArea );
+          Timer tempTimer = new Timer( 2000, new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+              choice4.setVisible( true );
+              choice5.setVisible( true );
+            }
+          });
+          tempTimer.setRepeats( false );
+          tempTimer.start();
         }
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 4 && animationFinished && choiceNum == 1 ) {
+        animationFinished = false;
+        headLabel.setIcon( jtHeadImage );
+        nameLabel.setText( "JT" );
+        dialogueArea.setText( "" );
+        animateText( "Really? Sounds good. Bring it on!", 35, dialogueArea );
+        stageCnt[ 0 ] = 10;
+      } else if( stageCnt[ 0 ] == 5 && animationFinished && choiceNum == 4 ) {
+        animationFinished = false;
+        headLabel.setIcon( jtHeadImage );
+        nameLabel.setText( "JT" );
+        dialogueArea.setText( "" );
+        animateText( "Oh really? I think I found it laying around near my gear. Tell you what, since I'm feeling oh so generous, " + 
+        "beat me 1v1 and I'll let you have it.", 35, dialogueArea );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 6 && animationFinished && choiceNum == 4 ) {
+        animationFinished = false;
+        headLabel.setIcon( allanHeadImage );
+        nameLabel.setText( "Allan" );
+        dialogueArea.setText( "" );
+        animateText( "Really? Sounds good. Bring it on!", 35, dialogueArea );
+        stageCnt[ 0 ] = 10;
+      } else if( stageCnt[ 0 ] == 5 && animationFinished && choiceNum == 5 ) {
+        animationFinished = false;
+        headLabel.setIcon( jtHeadImage );
+        nameLabel.setText( "JT" );
+        dialogueArea.setText( "" );
+        animateText( "Oh you've done it now boy. Square up fool. I'll beat you up so hard it'll make your ancestors dizzy!", 35, dialogueArea );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 6 && animationFinished && choiceNum == 5 ) {
+        headLabel.setIcon( allanHeadImage );
+        nameLabel.setText( "Allan" );
+        dialogueArea.setText( "" );
+        animateText( "Alright bring it! I'll wipe the floor with ya!", 35, dialogueArea );
+        stageCnt[ 0 ] = 10;
+      } else if( stageCnt[ 0 ] == 10 && animationFinished ) {
+        startBallGame();
       }
-    });
+    }
+  }
+
+  private class Chapter1ChoiceHandler extends MouseAdapter {
+    public void mouseClicked( MouseEvent e ) {
+      if( stageCnt[ 0 ] == 2 ) {
+        dialogueArea.setVisible( true );
+        dialogueLabel.setVisible( true );
+        headLabel.setIcon( allanHeadImage );
+        nameLabel.setText( "Allan" );
+        if( e.getSource().equals( choice1 ) ) {
+          choiceNum = 1;
+          animateText( "Sorry friend, my name is Allan. I was just looking for something.", 35, dialogueArea );
+        } else if( e.getSource().equals( choice2) ) {
+          choiceNum = 2;
+          animateText( "Nothing, my bad bruh.", 35, dialogueArea );
+        } else if( e.getSource().equals( choice3 ) ) {
+          choiceNum = 3;
+          animateText( "Clearly some kind of large subspecies african male who can't hoop if his life depended on it.", 35, dialogueArea );
+        }
+        choice1.setVisible( false );
+        choice2.setVisible( false );
+        choice3.setVisible( false );
+        stageCnt[ 0 ]++;
+      } else if( stageCnt[ 0 ] == 4 ) {
+        headLabel.setIcon( allanHeadImage );
+        nameLabel.setText( "Allan" );
+        if( choiceNum == 2 ) {
+          if( e.getSource().equals( choice4 ) ) {
+            choiceNum = 4;
+            animateText( "Actually, I was looking for someone else", 35, dialogueArea );
+          } else if( e.getSource().equals( choice5 ) ) {
+            choiceNum = 5;
+            animateText( "Bug off? How about you quit yappin' with them big lips of yours before I go sicko mode!", 35, dialogueArea );
+          }
+        } else if( choiceNum == 3 ) {
+          if( e.getSource().equals( choice4 ) ) {
+            choiceNum = 4;
+            animateText( "It was nothing I swear. I was just looking for something.", 35, dialogueArea );
+          } else if( e.getSource().equals( choice5 ) ) {
+            choiceNum = 5;
+            animateText( "You heard me fool! I see them bricks you throwin' up!", 35, dialogueArea );
+          }
+        }
+        choice4.setVisible( false );
+        choice5.setVisible( false );
+        stageCnt[ 0 ]++;
+      }
+    }
+  }
+
+  private void startBallGame() {
+    resetScreen();
+    frame.add( panel );
   }
   
   private void animateText( String text, int time ) {
@@ -711,6 +977,7 @@ public class Game extends javafx.application.Application {
         if( stringCounter > text.length() ) {
           t.stop();
           stringCounter = 0;
+          animationFinished = true;
           return;
         }
       }
@@ -735,6 +1002,63 @@ public class Game extends javafx.application.Application {
       }
     });
     t.start();
+  }
+
+  //resets the screen to make it easier to transition between chapters
+  private void resetScreen() {
+    //resetting frame
+    frame.remove( panel );
+    //resetting basics
+    animationFinished = false;
+    stageCnt[ 0 ] = 0;
+    //resetting panel
+    panel = new JPanel();
+    panel.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
+    panel.setLayout( layout );
+    panel.add( nameLabel );
+    panel.add( headLabel );
+    panel.add( dialogueArea );
+    panel.add( dialogueLabel );
+    panel.add( textArea );
+    panel.add( textLabel );
+    layout.putConstraint( SpringLayout.WEST, dialogueArea, 348, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, dialogueArea, 618, SpringLayout.NORTH, panel );
+    placeComponent( 183, 563, dialogueLabel );
+    dialogueArea.setVisible( false );
+    dialogueLabel.setVisible( false );
+    placeComponent( 203, 618, textArea );
+    textArea.setVisible( false );
+    placeComponent( 183, 598, textLabel );
+    textLabel.setVisible( false );
+    layout.putConstraint( SpringLayout.WEST, nameLabel, 350, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, nameLabel, 575, SpringLayout.NORTH, panel );
+    nameLabel.setVisible( false );
+    layout.putConstraint( SpringLayout.WEST, headLabel, 185, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, headLabel, 560, SpringLayout.NORTH, panel );
+    headLabel.setVisible( false );
+    //resetting dialogueArea
+    dialogueArea.setText( "" );
+    MouseListener [] mListeners = dialogueArea.getMouseListeners();
+    for( int i = 0; i < mListeners.length; i++ ) {
+      dialogueArea.removeMouseListener( mListeners[ i ] );
+    }
+    //resetting textArea
+    textArea.setText( "" );
+    mListeners = textArea.getMouseListeners();
+    for( int i = 0; i < mListeners.length; i++ ) {
+      textArea.removeMouseListener( mListeners[ i ] );
+    }
+    //resetting bgLabel
+    bgLabel = new JLabel();
+  }
+  
+  private ImageIcon getImageIcon( String s ) {
+    return new ImageIcon( getClass().getResource( "resources/" + s ) );
+  }
+  
+  private void placeComponent( int x, int y, Component c ) {
+    layout.putConstraint( SpringLayout.WEST, c, x, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, c, y, SpringLayout.NORTH, panel );
   }
   
   private void setButtonTransparent( JButton b ) {
