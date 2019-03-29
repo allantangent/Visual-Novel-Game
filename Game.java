@@ -29,7 +29,7 @@ public class Game extends javafx.application.Application {
   private static final int FRAME_HEIGHT = 768;
   private JFrame frame;
   private JPanel panel;
-  private JLabel label, mainMenu, bgLabel, headLabel, nameLabel, dialogueLabel, textLabel, versatileLabel1, versatileLabel2;
+  private JLabel label, mainMenu, bgLabel, headLabel, nameLabel, dialogueLabel, textLabel, versatileLabel1, versatileLabel2, versatileLabel3;
   private ImageIcon secretImage, mainScreenBG, playButtonImage, creditsButtonImage, exitButtonImage, playHoveredImage, creditsHoveredImage,
       exitHoveredImage, skipIntroButtonImage, skipIntroHoveredImage, intro1Image, companyLogo, titleScreen, intro2Image, intro3Image, intro4Image,
       intro5Image, intro6Image, intro7Image, intro8Image, intro9Image, intro10Image, intro11Image, intro12Image, intro13Image, chapter1Image,
@@ -40,7 +40,7 @@ public class Game extends javafx.application.Application {
   private SpringLayout layout;
   private JTextArea textArea, dialogueArea, prophecyText;
   private int stringCounter, choiceNum;
-  private boolean introSkipped;
+  private boolean introSkipped, jtBlock;
   private static boolean animationFinished = false;
   private int [] stageCnt = { 0 }; // used to track the number of user clicks to know which stage to advance to and also to bypass final error
   private String curStage; // used to check current stage to accurately represent button hovering
@@ -85,7 +85,7 @@ public class Game extends javafx.application.Application {
     tutorialOpenProphecyImage = getImageIcon( "1.1_tutorial.gif" );
     jtHeadImage = getImageIcon( "JT_head.gif" );
     rudyHeadImage = getImageIcon( "Rudy_head.gif" );
-    allanHeadImage = getImageIcon( "Allan_head.gif" );
+    allanHeadImage = getImageIcon( "Allan_head.png" );
     prophecyTitleImage = getImageIcon( "prophecy transition.gif" );
     tutorialTransitionImage = getImageIcon( "2_tutorial.gif" );
     chapter11Image = getImageIcon( "1_chapter1.gif" );
@@ -931,7 +931,7 @@ public class Game extends javafx.application.Application {
         headLabel.setIcon( jtHeadImage );
         nameLabel.setText( "JT" );
         dialogueArea.setText( "" );
-        animateText( "Listen up short stuff. My court my ball. First to 11 takes game and shot counts as 1 point but 3's stay 3. And tell ya what, "
+        animateText( "Listen up short stuff. My court my ball. First to 11 takes game and shots count as 1 point but 3's stay 3. And tell ya what, "
             + "if you somehow manage to dunk on meh, I'll admit defeat.", 35, dialogueArea );
         stageCnt[ 0 ]++;
       } else if( stageCnt[ 0 ] == 11 && animationFinished ) {
@@ -991,14 +991,25 @@ public class Game extends javafx.application.Application {
   private void startBallGame() {
     curStage = "ball_game";
     resetScreen();
+    setNewSong( "ball game song" );
     frame.add( panel );
     bgLabel.setIcon( getImageIcon( "before ball transition.gif" ) );
-    panel.add( new JLabel( getImageIcon( "ball game scoreboard.gif") ) );
+    versatileLabel1 = new JLabel( getImageIcon( "ball game scoreboard.gif" ) );
+    versatileLabel2 = new JLabel( getImageIcon( "score_1.png" ) ); // player sore
+    versatileLabel3 = new JLabel( getImageIcon( "score_1.png" ) ); // jt score
+    panel.add( versatileLabel2 );
+    versatileLabel2.setVisible( false );
+    panel.add( versatileLabel3 );
+    versatileLabel3.setVisible( false );
+    panel.add( versatileLabel1 );
+    versatileLabel1.setVisible( false );
     panel.add( choice1 );
     panel.add( choice2 );
     panel.add( choice3 );
     panel.add( bgLabel );
     placeComponent( 383, 280, choice2 );
+    placeComponent( 60, 7, versatileLabel2 );
+    placeComponent( 284, 7, versatileLabel3 );
     layout.putConstraint( SpringLayout.WEST, choice1, 338, SpringLayout.WEST, panel );
     layout.putConstraint( SpringLayout.SOUTH, choice1, 0, SpringLayout.NORTH, choice2 );
     layout.putConstraint( SpringLayout.WEST, choice3, 428, SpringLayout.WEST, panel );
@@ -1013,6 +1024,7 @@ public class Game extends javafx.application.Application {
       @Override
       public void actionPerformed( ActionEvent e ) {
         bgLabel.setIcon( getImageIcon( "ball menu.gif" ) );
+        versatileLabel1.setVisible( true );
         choice1.setVisible( true );
         choice2.setVisible( true );
         choice3.setVisible( true );
@@ -1023,14 +1035,47 @@ public class Game extends javafx.application.Application {
     } );
     tempTimer.setRepeats( false );
     tempTimer.start();
+    counter = 1;
     panel.revalidate();
   }
 
   private void displayBallGameMenu() {
-    bgLabel.setIcon( getImageIcon( "ball menu.gif" ) );
-    choice1.setVisible( true );
-    choice2.setVisible( true );
-    choice3.setVisible( true );
+    if( ballScore >= 11 ) {
+      bgLabel.setIcon( getImageIcon( "ball game win.gif" ) );
+    } else if( counter >= 10 ) {
+      bgLabel.setIcon( getImageIcon( "ball game lose.gif") );
+    } else {
+      bgLabel.setIcon( getImageIcon( "ball menu.gif" ) );
+      if( ballScore > 0 ) {
+        versatileLabel2.setIcon( getImageIcon( "score_" + ballScore + ".png" ) );
+        versatileLabel2.setVisible( true );
+      }
+      versatileLabel3.setIcon( getImageIcon( "score_" + counter + ".png" ) );
+      choice1.setVisible( true );
+      choice2.setVisible( true );
+      choice3.setVisible( true );
+      versatileLabel1.setVisible( true );
+      versatileLabel3.setVisible( true );
+
+      if( jtBlock ) {
+        headLabel.setIcon( jtHeadImage );
+        nameLabel.setText( "JT" );
+        dialogueLabel.setVisible( true );
+        dialogueArea.setVisible( true );
+        headLabel.setVisible( true );
+        nameLabel.setVisible( true );
+        animateText( "OUTTA HERE BOY!\r\n\tWHATCHU TRYIN?\r\n\t\tNOT IN MY HOUSE!", 35, dialogueArea );
+        jtBlock = false;
+      } else if( counter == 6 ) {
+        headLabel.setIcon( jtHeadImage );
+        nameLabel.setText( "JT" );
+        dialogueLabel.setVisible( true );
+        dialogueArea.setVisible( true );
+        headLabel.setVisible( true );
+        nameLabel.setVisible( true );
+        animateText( "Is this all you got little man?", 35, dialogueArea );
+      }
+    }
     panel.revalidate();
   }
 
@@ -1039,6 +1084,14 @@ public class Game extends javafx.application.Application {
       choice1.setVisible( false );
       choice2.setVisible( false );
       choice3.setVisible( false );
+      versatileLabel1.setVisible( false );
+      versatileLabel2.setVisible( false );
+      versatileLabel3.setVisible( false );
+      headLabel.setVisible( false );
+      dialogueArea.setVisible( false );
+      dialogueArea.setText( "" );
+      dialogueLabel.setVisible( false );
+      nameLabel.setVisible( false );
       if( e.getSource().equals( choice1 ) ) {
         if( ( ( int )( Math.random() * 10 + 1 ) ) <= 4 ) { // 40% chance 3 pt
           ballScore += 3;
@@ -1050,6 +1103,10 @@ public class Game extends javafx.application.Application {
           ImageIcon shot = getImageIcon( "allan 3 pt miss.gif" );
           shot.getImage().flush();
           bgLabel.setIcon( shot );
+        }
+        if( counter == 10 ) {
+          displayBallGameMenu();
+          return;
         }
         Timer jtScoreTimer = new Timer( 4000, new ActionListener() {
           @Override
@@ -1072,13 +1129,17 @@ public class Game extends javafx.application.Application {
         timer.setRepeats( false );
         timer.start();
       } else if( e.getSource().equals( choice2 ) ) {
-        ballScore++;
         if( ( int )( Math.random() * 10 ) + 1 <= 8 ) { // 80% chance jumpshot
+          ballScore++;
           int shotNumber = ( int )( Math.random() * 3 ) + 1;
           if( shotNumber == 1 || shotNumber == 3 ) {
             ImageIcon shot = getImageIcon( "allan jump shot_" + shotNumber + ".gif" );
             shot.getImage().flush();
             bgLabel.setIcon( shot );
+            if( counter == 10 ) {
+              displayBallGameMenu();
+              return;
+            }
             Timer timer = new Timer( 4000, new ActionListener() {
               @Override
               public void actionPerformed( ActionEvent e ) {
@@ -1103,7 +1164,11 @@ public class Game extends javafx.application.Application {
             ImageIcon shot = getImageIcon( "allan jump shot_" + shotNumber + ".gif" );
             shot.getImage().flush();
             bgLabel.setIcon( shot );
-            Timer timer = new Timer( 6500, new ActionListener() {
+            if( counter == 10 ) {
+              displayBallGameMenu();
+              return;
+            }
+            Timer timer = new Timer( 8000, new ActionListener() {
               @Override
               public void actionPerformed( ActionEvent e ) {
                 int rng = ( int )( Math.random() * 3 ) + 1;
@@ -1115,7 +1180,7 @@ public class Game extends javafx.application.Application {
             } );
             timer.setRepeats( false );
             timer.start();
-            Timer t = new Timer( 12500, new ActionListener() {
+            Timer t = new Timer( 14000, new ActionListener() {
               @Override
               public void actionPerformed( ActionEvent evt ) {
                 displayBallGameMenu();
@@ -1129,6 +1194,10 @@ public class Game extends javafx.application.Application {
           ImageIcon shot = getImageIcon( "allan jump shot miss_" + shotNumber + ".gif" );
           shot.getImage().flush();
           bgLabel.setIcon( shot );
+          if( counter == 10 ) {
+            displayBallGameMenu();
+            return;
+          }
           Timer timer = new Timer( 4000, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
@@ -1151,7 +1220,7 @@ public class Game extends javafx.application.Application {
           t.start();
         }
       } else if( e.getSource().equals( choice3 ) ) {
-        if( ( ( int )( Math.random() * 10 ) ) + 1 <= 1 ) { // 10% chance dunk
+        if( ( ( int )( Math.random() * 8 ) ) + 1 <= 1 ) { // 8% chance dunk
           bgLabel.setIcon( getImageIcon( "allan dunk.gif" ) );
           Timer timer = new Timer( 6500, new ActionListener() {
             @Override
@@ -1165,6 +1234,11 @@ public class Game extends javafx.application.Application {
           ImageIcon shot = getImageIcon( "allan dunk blocked.gif" );
           shot.getImage().flush();
           bgLabel.setIcon( shot );
+          jtBlock = true;
+          if( counter == 10 ) {
+            displayBallGameMenu();
+            return;
+          }
           Timer timer = new Timer( 3200, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent evt ) {
