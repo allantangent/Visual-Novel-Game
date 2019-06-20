@@ -33,18 +33,21 @@ public class Game extends javafx.application.Application {
   private ImageIcon secretImage, mainScreenBG, playButtonImage, creditsButtonImage, exitButtonImage, playHoveredImage, creditsHoveredImage,
       exitHoveredImage, skipIntroButtonImage, skipIntroHoveredImage, intro1Image, companyLogo, titleScreen, intro2Image, intro3Image, intro4Image,
       intro5Image, intro6Image, intro7Image, intro8Image, intro9Image, intro10Image, intro11Image, intro12Image, intro13Image, chapter1Image,
-      tutorial1Image, tutorialClosedProphecyImage, tutorialOpenProphecyImage, tutorialTransitionImage, jtHeadImage, rudyHeadImage, allanHeadImage,
+      tutorial1Image, tutorialClosedProphecyImage, tutorialOpenProphecyImage, tutorialTransitionImage, jtHeadImage, allanHeadImage,
       prophecyTitleImage, chapter11Image;
-  private JButton play, credits, exit, secretButt, skipIntro, choice1, choice2, choice3, choice4, choice5;
+  private JButton play, credits, exit, secretButt, skipIntro, choice1, choice2, choice3, choice4, choice5, tryAgain;
   private static MediaPlayer mediaPlayer;
   private SpringLayout layout;
   private JTextArea textArea, dialogueArea, prophecyText;
   private int stringCounter, choiceNum;
   private boolean introSkipped, jtBlock;
   private static boolean animationFinished = false;
+  private static boolean fadeFinished = false;
+  private boolean ballGameFinished= false;
   private int [] stageCnt = { 0 }; // used to track the number of user clicks to know which stage to advance to and also to bypass final error
   private String curStage; // used to check current stage to accurately represent button hovering
   private int counter, ballScore;
+  private String chosenFood;
 
   // private JSlider slider;
 
@@ -84,7 +87,6 @@ public class Game extends javafx.application.Application {
     tutorialClosedProphecyImage = getImageIcon( "1.1_closed.gif" );
     tutorialOpenProphecyImage = getImageIcon( "1.1_tutorial.gif" );
     jtHeadImage = getImageIcon( "JT_head.gif" );
-    rudyHeadImage = getImageIcon( "Rudy_head.gif" );
     allanHeadImage = getImageIcon( "Allan_head.png" );
     prophecyTitleImage = getImageIcon( "prophecy transition.gif" );
     tutorialTransitionImage = getImageIcon( "2_tutorial.gif" );
@@ -120,7 +122,7 @@ public class Game extends javafx.application.Application {
     dialogueArea.setPreferredSize( new Dimension( 850, 100 ) );
     dialogueArea.setForeground( new Color( 249, 253, 168 ) );
     dialogueArea.setOpaque( false );
-    dialogueArea.setBorder( BorderFactory.createEmptyBorder( 5, 0, 0, 10 ) );
+    dialogueArea.setBorder( BorderFactory.createEmptyBorder( 5, 0, 0, 15 ) );
     dialogueArea.setWrapStyleWord( true );
     dialogueArea.setLineWrap( true );
     dialogueArea.setEditable( false );
@@ -218,6 +220,24 @@ public class Game extends javafx.application.Application {
         choice2.setIcon( getImageIcon( "jumpH.png" ) );
       } else if( evt.getSource().equals( choice3 ) && curStage.equals( "ball_game" ) ) {
         choice3.setIcon( getImageIcon( "dunkH.png" ) );
+      } else if( evt.getSource().equals( tryAgain ) ) {
+        tryAgain.setIcon( getImageIcon( "try againH.png" ) );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "ball_game_end") ) {
+        choice1.setIcon( getImageIcon( "district button h.png" ) );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "ball_game_end" ) ) {
+        choice2.setIcon( getImageIcon( "downtown button h.png" ) );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "district" ) ) {
+        choice1.setIcon( getImageIcon( "in n out h.png" ) );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "district" ) ) {
+        choice2.setIcon( getImageIcon( "lil caesars h.png" ) );
+      } else if( evt.getSource().equals( choice3 ) && curStage.equals( "district" ) ) {
+        choice3.setIcon( getImageIcon( "whole foods h.png" ) );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "downtown" ) ) {
+        choice1.setIcon( getImageIcon( "85 degrees button h.png" ) );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "downtown" ) ) {
+        choice2.setIcon( getImageIcon( "coldstone button h.png" ) );
+      } else if( evt.getSource().equals( choice3 ) && curStage.equals( "downtown" ) ) {
+        choice3.setIcon( getImageIcon( "stickyfingers button h.png" ) );
       }
     }
 
@@ -247,6 +267,24 @@ public class Game extends javafx.application.Application {
         choice2.setIcon( getImageIcon( "jump.png" ) );
       } else if( evt.getSource().equals( choice3 ) && curStage.equals( "ball_game" ) ) {
         choice3.setIcon( getImageIcon( "dunk.png" ) );
+      } else if( evt.getSource().equals( tryAgain ) ) {
+        tryAgain.setIcon( getImageIcon( "try again.png" ) );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "ball_game_end" ) ) {
+        choice1.setIcon( getImageIcon( "district button.png" ) );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "ball_game_end" ) ) {
+        choice2.setIcon( getImageIcon( "downtown button.png" ) );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "district" ) ) {
+        choice1.setIcon( getImageIcon( "in n out.png" ) );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "district" ) ) {
+        choice2.setIcon( getImageIcon( "lil caesars.png" ) );
+      } else if( evt.getSource().equals( choice3 ) && curStage.equals( "district" ) ) {
+        choice3.setIcon( getImageIcon( "whole foods.png" ) );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "downtown" ) ) {
+        choice1.setIcon( getImageIcon( "85 degrees button.png" ) );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "downtown" ) ) {
+        choice2.setIcon( getImageIcon( "coldstone button.png" ) );
+      } else if( evt.getSource().equals( choice3 ) && curStage.equals( "downtown" ) ) {
+        choice3.setIcon( getImageIcon( "stickyfingers button.png" ) );
       }
     }
   }
@@ -318,10 +356,15 @@ public class Game extends javafx.application.Application {
         } );
         timer.setRepeats( false );
         timer.start();
-      } else if( evt.getSource().equals( credits ) ) {
+      } else if( evt.getSource().equals( credits ) ) { // USE ME TO DEBUG AND SKIP ALL THE PREVIOUS SCENES
+        /*
         mainMenu.setIcon( null );
         mainMenu.setText( "made by sum peeps" );
         mainMenu.revalidate();
+        */
+        ballScore = 69;
+        resetAll();
+        endBallGame();
       } else if( evt.getSource().equals( exit ) ) {
         frame.dispatchEvent( new java.awt.event.WindowEvent( frame, java.awt.event.WindowEvent.WINDOW_CLOSING ) );
       } else if( evt.getSource().equals( secretButt ) ) {
@@ -558,7 +601,22 @@ public class Game extends javafx.application.Application {
     } );
     t.setRepeats( false );
     t.start();
-    t = new Timer( t.getDelay() + 14000, new ActionListener() {
+    t = new Timer( t.getDelay() + 7000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        if( !introSkipped ) {
+          panel.remove( panel.getComponent( 3 ) );
+          panel.add( new JLabel( getImageIcon( "12.5_intro.gif" ) ) );
+          textArea.setVisible( false );
+          textLabel.setVisible( false );
+          textArea.setText( "" );
+          panel.revalidate();
+        }
+      }
+    } );
+    t.setRepeats( false );
+    t.start();
+    t = new Timer( t.getDelay() + 7000, new ActionListener() {
       @Override
       public void actionPerformed( ActionEvent evt ) {
         if( !introSkipped ) {
@@ -674,15 +732,6 @@ public class Game extends javafx.application.Application {
         nameLabel.setVisible( true );
         panel.revalidate();
         animateText( "Damn that flight was long... finally made it back to Irvine.\r\n", 50, dialogueArea );
-        // delay necessary to prevent spam clicking
-        Timer tempTimer = new Timer( 3200, new ActionListener() {
-          @Override
-          public void actionPerformed( ActionEvent evt ) {
-            animationFinished = false;
-          }
-        } );
-        tempTimer.setRepeats( false );
-        tempTimer.start();
       }
     } );
     t.setRepeats( false );
@@ -694,7 +743,7 @@ public class Game extends javafx.application.Application {
   private class TutorialScreenClickedMouseAdapter extends MouseAdapter {
     @Override
     public void mouseClicked( MouseEvent e ) {
-      if( stageCnt[ 0 ] == 0 && animationFinished ) {
+      if( stageCnt[ 0 ] == 0 && animationFinished  && fadeFinished ) {
         animationFinished = false;
         final Timer tempTimer = new Timer( 50, null );
         tempTimer.addActionListener( new ActionListener() {
@@ -917,7 +966,7 @@ public class Game extends javafx.application.Application {
         headLabel.setIcon( jtHeadImage );
         nameLabel.setText( "JT" );
         dialogueArea.setText( "" );
-        animateText( "Oh you've done it now boy. Square up fool. I'll beat you so hard it'll make your ancestors dizzy!", 35, dialogueArea );
+        animateText( "Oh you've done it now boy. Square up fool. I'll beat you so hard it'll make your    ancestors dizzy!", 35, dialogueArea );
         stageCnt[ 0 ]++;
       } else if( stageCnt[ 0 ] == 6 && animationFinished && choiceNum == 5 ) {
         animationFinished = false;
@@ -965,14 +1014,16 @@ public class Game extends javafx.application.Application {
         headLabel.setIcon( allanHeadImage );
         nameLabel.setText( "Allan" );
         if( choiceNum == 2 ) {
+          animationFinished = false;
           if( e.getSource().equals( choice4 ) ) {
             choiceNum = 4;
-            animateText( "Actually, I was looking for someone else", 35, dialogueArea );
+            animateText( "Actually, I was looking for someone else.", 35, dialogueArea );
           } else if( e.getSource().equals( choice5 ) ) {
             choiceNum = 5;
             animateText( "Bug off? How about you quit yappin' with them big lips of yours before I go sicko mode!", 35, dialogueArea );
           }
         } else if( choiceNum == 3 ) {
+          animationFinished = false;
           if( e.getSource().equals( choice4 ) ) {
             choiceNum = 4;
             animateText( "It was nothing I swear. I was just looking for something.", 35, dialogueArea );
@@ -993,7 +1044,9 @@ public class Game extends javafx.application.Application {
     resetScreen();
     setNewSong( "ball game song" );
     frame.add( panel );
-    bgLabel.setIcon( getImageIcon( "before ball transition.gif" ) );
+    ImageIcon beforeBallTransition = getImageIcon( "before ball transition.gif" );
+    beforeBallTransition.getImage().flush();
+    bgLabel.setIcon( beforeBallTransition );
     versatileLabel1 = new JLabel( getImageIcon( "ball game scoreboard.gif" ) );
     versatileLabel2 = new JLabel( getImageIcon( "score_1.png" ) ); // player sore
     versatileLabel3 = new JLabel( getImageIcon( "score_1.png" ) ); // jt score
@@ -1014,6 +1067,7 @@ public class Game extends javafx.application.Application {
     layout.putConstraint( SpringLayout.SOUTH, choice1, 0, SpringLayout.NORTH, choice2 );
     layout.putConstraint( SpringLayout.WEST, choice3, 428, SpringLayout.WEST, panel );
     layout.putConstraint( SpringLayout.NORTH, choice3, 0, SpringLayout.SOUTH, choice2 );
+    resetChoiceButtons();
     choice1.setIcon( getImageIcon( "3 point shot.png" ) );
     choice2.setIcon( getImageIcon( "jump.png" ) );
     choice3.setIcon( getImageIcon( "dunk.png" ) );
@@ -1036,14 +1090,28 @@ public class Game extends javafx.application.Application {
     tempTimer.setRepeats( false );
     tempTimer.start();
     counter = 1;
+    ballScore = 0;
     panel.revalidate();
   }
 
   private void displayBallGameMenu() {
     if( ballScore >= 11 ) {
       bgLabel.setIcon( getImageIcon( "ball game win.gif" ) );
-    } else if( counter >= 10 ) {
-      bgLabel.setIcon( getImageIcon( "ball game lose.gif") );
+      Timer timer = new Timer( 6500, new ActionListener(){ 
+        public void actionPerformed( ActionEvent evt ) {
+          panel.addMouseListener( new MouseAdapter() {
+            public void mouseClicked( MouseEvent evt ) {
+              if( !ballGameFinished ) {
+                ballGameFinished = true;
+                endBallGame();
+              }
+            }
+          });
+        }
+      });
+      timer.setRepeats( false );
+      timer.start();
+      return;
     } else {
       bgLabel.setIcon( getImageIcon( "ball menu.gif" ) );
       if( ballScore > 0 ) {
@@ -1058,15 +1126,18 @@ public class Game extends javafx.application.Application {
       versatileLabel3.setVisible( true );
 
       if( jtBlock ) {
+        String [] jtSayings = { "OUTTA HERE BOY!", "WATCHU TRYIN?", "NOT IN MY HOUSE!", 
+          "STAY IN YO LANE!", "BUH BYE! THAT ALL YOU GOT?", "PATHETIC!" };
+        int rng = ( int )( Math.random() * jtSayings.length );
         headLabel.setIcon( jtHeadImage );
         nameLabel.setText( "JT" );
         dialogueLabel.setVisible( true );
         dialogueArea.setVisible( true );
         headLabel.setVisible( true );
         nameLabel.setVisible( true );
-        animateText( "OUTTA HERE BOY!\r\n\tWHATCHU TRYIN?\r\n\t\tNOT IN MY HOUSE!", 35, dialogueArea );
+        animateText( jtSayings[ rng ], 35, dialogueArea );
         jtBlock = false;
-      } else if( counter == 6 ) {
+      } else if( counter == 6 && counter > ballScore ) {
         headLabel.setIcon( jtHeadImage );
         nameLabel.setText( "JT" );
         dialogueLabel.setVisible( true );
@@ -1093,7 +1164,7 @@ public class Game extends javafx.application.Application {
       dialogueLabel.setVisible( false );
       nameLabel.setVisible( false );
       if( e.getSource().equals( choice1 ) ) {
-        if( ( ( int )( Math.random() * 10 + 1 ) ) <= 4 ) { // 40% chance 3 pt
+        if( ( ( int )( Math.random() * 10 + 1 ) ) <= 9 ) { // 40% chance 3 pt     //CHANGE LATER
           ballScore += 3;
           int shotNumber = ( int )( Math.random() * 2 ) + 1;
           ImageIcon shot = getImageIcon( "allan 3 pt_" + shotNumber + ".gif" );
@@ -1104,30 +1175,50 @@ public class Game extends javafx.application.Application {
           shot.getImage().flush();
           bgLabel.setIcon( shot );
         }
-        if( counter == 10 ) {
-          displayBallGameMenu();
-          return;
-        }
         Timer jtScoreTimer = new Timer( 4000, new ActionListener() {
           @Override
           public void actionPerformed( ActionEvent e ) {
-            int rng = ( int )( Math.random() * 3 ) + 1;
-            ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
-            shot.getImage().flush();
-            bgLabel.setIcon( shot );
-            counter++;
+            if( ballScore >= 11 ) {
+              displayBallGameMenu();
+              return;
+            } else if( counter >= 10 ) {
+              bgLabel.setIcon( getImageIcon( "ball game lose.gif") );
+              counter = 0;
+              Timer t = new Timer( 6500, new ActionListener() {
+                @Override
+                public void actionPerformed( ActionEvent e ) {
+                  panel.addMouseListener( new MouseAdapter() {
+                    public void mouseClicked( MouseEvent evt ) {
+                      counter = 0;
+                      endBallGame();
+                    }
+                  });
+                }
+              } );
+              t.start();
+              t.setRepeats( false );
+              return;
+            } else {
+              int rng = ( int )( Math.random() * 3 ) + 1;
+              ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
+              shot.getImage().flush();
+              bgLabel.setIcon( shot );
+              counter++;
+              Timer timer = new Timer( 6000, new ActionListener() {
+                @Override
+                public void actionPerformed( ActionEvent evt ) {
+                  if( counter != 0 ) {
+                    displayBallGameMenu();
+                  }
+                }
+              } );
+              timer.setRepeats( false );
+              timer.start();
+            }
           }
         } );
         jtScoreTimer.setRepeats( false );
         jtScoreTimer.start();
-        Timer timer = new Timer( 10000, new ActionListener() {
-          @Override
-          public void actionPerformed( ActionEvent evt ) {
-            displayBallGameMenu();
-          }
-        } );
-        timer.setRepeats( false );
-        timer.start();
       } else if( e.getSource().equals( choice2 ) ) {
         if( ( int )( Math.random() * 10 ) + 1 <= 8 ) { // 80% chance jumpshot
           ballScore++;
@@ -1136,96 +1227,167 @@ public class Game extends javafx.application.Application {
             ImageIcon shot = getImageIcon( "allan jump shot_" + shotNumber + ".gif" );
             shot.getImage().flush();
             bgLabel.setIcon( shot );
-            if( counter == 10 ) {
-              displayBallGameMenu();
-              return;
-            }
             Timer timer = new Timer( 4000, new ActionListener() {
               @Override
               public void actionPerformed( ActionEvent e ) {
-                int rng = ( int )( Math.random() * 3 ) + 1;
-                ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
-                shot.getImage().flush();
-                bgLabel.setIcon( shot );
-                counter++;
+                if( ballScore >= 11 ) {
+                  displayBallGameMenu();
+                  return;
+                }
+                if( counter >= 10 ) {
+                  bgLabel.setIcon( getImageIcon( "ball game lose.gif") );
+                  counter = 0;
+                  Timer t = new Timer( 6500, new ActionListener() {
+                    @Override
+                    public void actionPerformed( ActionEvent e ) {
+                      panel.addMouseListener( new MouseAdapter() {
+                        public void mouseClicked( MouseEvent evt ) {
+                          counter = 0;
+                          endBallGame();
+                        }
+                      });
+                    }
+                  } );
+                  t.start();
+                  t.setRepeats( false );
+                  return;
+                } else {
+                  int rng = ( int )( Math.random() * 3 ) + 1;
+                  ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
+                  shot.getImage().flush();
+                  bgLabel.setIcon( shot );
+                  counter++;
+                  Timer t = new Timer( 6000, new ActionListener() {
+                    @Override
+                    public void actionPerformed( ActionEvent evt ) {
+                      if( counter != 0 ) {
+                        displayBallGameMenu();
+                      }
+                    }
+                  } );
+                  t.setRepeats( false );
+                  t.start();
+                }
               }
             } );
             timer.setRepeats( false );
             timer.start();
-            Timer t = new Timer( 10000, new ActionListener() {
-              @Override
-              public void actionPerformed( ActionEvent evt ) {
-                displayBallGameMenu();
-              }
-            } );
-            t.setRepeats( false );
-            t.start();
           } else if( shotNumber == 2 ) {
             ImageIcon shot = getImageIcon( "allan jump shot_" + shotNumber + ".gif" );
             shot.getImage().flush();
             bgLabel.setIcon( shot );
-            if( counter == 10 ) {
-              displayBallGameMenu();
-              return;
-            }
             Timer timer = new Timer( 8000, new ActionListener() {
               @Override
               public void actionPerformed( ActionEvent e ) {
-                int rng = ( int )( Math.random() * 3 ) + 1;
-                ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
-                shot.getImage().flush();
-                bgLabel.setIcon( shot );
-                counter++;
+                if( ballScore >= 11 ) {
+                  displayBallGameMenu();
+                  return;
+                }
+                if( counter >= 10 ) {
+                  bgLabel.setIcon( getImageIcon( "ball game lose.gif") );
+                  counter = 0;
+                  Timer t = new Timer( 6500, new ActionListener() {
+                    @Override
+                    public void actionPerformed( ActionEvent e ) {
+                      panel.addMouseListener( new MouseAdapter() {
+                        public void mouseClicked( MouseEvent evt ) {
+                          counter = 0;
+                          endBallGame();
+                        }
+                      });
+                    }
+                  } );
+                  t.start();
+                  t.setRepeats( false );
+                  return;
+                } else {
+                  int rng = ( int )( Math.random() * 3 ) + 1;
+                  ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
+                  shot.getImage().flush();
+                  bgLabel.setIcon( shot );
+                  counter++;
+                  Timer t = new Timer( 6000, new ActionListener() {
+                    @Override
+                    public void actionPerformed( ActionEvent evt ) {
+                      if( counter != 0 ) {
+                        displayBallGameMenu();
+                      }
+                    }
+                  } );
+                  t.setRepeats( false );
+                  t.start();
+                }
               }
             } );
             timer.setRepeats( false );
             timer.start();
-            Timer t = new Timer( 14000, new ActionListener() {
-              @Override
-              public void actionPerformed( ActionEvent evt ) {
-                displayBallGameMenu();
-              }
-            } );
-            t.setRepeats( false );
-            t.start();
           }
         } else {
           int shotNumber = ( int )( Math.random() * 2 ) + 1;
           ImageIcon shot = getImageIcon( "allan jump shot miss_" + shotNumber + ".gif" );
           shot.getImage().flush();
           bgLabel.setIcon( shot );
-          if( counter == 10 ) {
-            displayBallGameMenu();
-            return;
-          }
           Timer timer = new Timer( 4000, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-              int rng = ( int )( Math.random() * 3 ) + 1;
-              ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
-              shot.getImage().flush();
-              bgLabel.setIcon( shot );
-              counter++;
+              if( counter >= 10 ) {
+                bgLabel.setIcon( getImageIcon( "ball game lose.gif") );
+                counter = 0;
+                Timer t = new Timer( 6500, new ActionListener() {
+                  @Override
+                  public void actionPerformed( ActionEvent e ) {
+                    panel.addMouseListener( new MouseAdapter() {
+                      public void mouseClicked( MouseEvent evt ) {
+                        counter = 0;
+                        endBallGame();
+                      }
+                    });
+                  }
+                } );
+                t.start();
+                t.setRepeats( false );
+                return;
+              } else {
+                int rng = ( int )( Math.random() * 3 ) + 1;
+                ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
+                shot.getImage().flush();
+                bgLabel.setIcon( shot );
+                counter++;
+                Timer t = new Timer( 6000, new ActionListener() {
+                  @Override
+                  public void actionPerformed( ActionEvent evt ) {
+                    if( counter != 0 ) {
+                      displayBallGameMenu(); 
+                    }
+                  }
+                } );
+                t.setRepeats( false );
+                t.start();
+              }
             }
           } );
           timer.setRepeats( false );
           timer.start();
-          Timer t = new Timer( 10000, new ActionListener() {
-            @Override
-            public void actionPerformed( ActionEvent evt ) {
-              displayBallGameMenu();
-            }
-          } );
-          t.setRepeats( false );
-          t.start();
         }
       } else if( e.getSource().equals( choice3 ) ) {
-        if( ( ( int )( Math.random() * 8 ) ) + 1 <= 1 ) { // 8% chance dunk
+        if( ( ( int )( Math.random() * 100 ) ) + 1 <= 8 ) { // 8% chance dunk
+          ballScore = 69;
           bgLabel.setIcon( getImageIcon( "allan dunk.gif" ) );
           Timer timer = new Timer( 6500, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent evt ) {
               bgLabel.setIcon( getImageIcon( "ball game win.gif" ) );
+              Timer timer = new Timer( 6500, new ActionListener(){ 
+                public void actionPerformed( ActionEvent evt ) {
+                  panel.addMouseListener( new MouseAdapter() {
+                    public void mouseClicked( MouseEvent evt ) {
+                      endBallGame();
+                    }
+                  });
+                }
+              });
+              timer.setRepeats( false );
+              timer.start();
             }
           } );
           timer.setRepeats( false );
@@ -1235,35 +1397,991 @@ public class Game extends javafx.application.Application {
           shot.getImage().flush();
           bgLabel.setIcon( shot );
           jtBlock = true;
-          if( counter == 10 ) {
-            displayBallGameMenu();
-            return;
-          }
           Timer timer = new Timer( 3200, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent evt ) {
-              int rng = ( int )( Math.random() * 3 ) + 1;
-              ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
-              shot.getImage().flush();
-              bgLabel.setIcon( shot );
-              counter++;
+              if( counter >= 10 ) {
+                bgLabel.setIcon( getImageIcon( "ball game lose.gif") );
+                counter = 0;
+                Timer t = new Timer( 6500, new ActionListener() {
+                  @Override
+                  public void actionPerformed( ActionEvent e ) {
+                    panel.addMouseListener( new MouseAdapter() {
+                      public void mouseClicked( MouseEvent evt ) {
+                        endBallGame();
+                      }
+                    });
+                  }
+                } );
+                t.start();
+                t.setRepeats( false );
+                return;
+              } else {
+                int rng = ( int )( Math.random() * 3 ) + 1;
+                ImageIcon shot = getImageIcon( "jt score " + rng + ".gif" );
+                shot.getImage().flush();
+                bgLabel.setIcon( shot );
+                counter++;
+                Timer t = new Timer( 6000, new ActionListener() {
+                  @Override
+                  public void actionPerformed( ActionEvent e ) {
+                    if( counter != 0 ) {
+                      displayBallGameMenu();
+                    }
+                  }
+                });
+                t.setRepeats( false );
+                t.start();
+              }
             }
           } );
           timer.setRepeats( false );
           timer.start();
-          Timer t = new Timer( timer.getDelay() + 6000, new ActionListener() {
-            @Override
-            public void actionPerformed( ActionEvent e ) {
-              displayBallGameMenu();
-            }
-          });
-          t.setRepeats( false );
-          t.start();
         }
       }
     }
   }
 
+  public void endBallGame() {
+    for( MouseListener m: panel.getMouseListeners() ) {
+      panel.removeMouseListener( m );
+      System.err.println( "MouseListener removed" );
+    }
+    curStage = "ball_game_end";
+    resetScreen();
+    panel.add( choice1 );
+    panel.add( choice2 );
+    resetChoiceButtons();
+    choice1.setIcon( getImageIcon( "district button.png" ) );
+    choice2.setIcon( getImageIcon( "downtown button.png" ) );
+    choice1.setVisible( false );
+    choice2.setVisible( false );
+    panel.add( bgLabel );
+    frame.add( panel );
+    panel.revalidate();
+    if( ballScore >= 11 ) {
+      ballScore = 0;
+      bgLabel.setIcon( getImageIcon( "after ball win.gif" ) );
+      dialogueArea.setVisible( true );
+      dialogueLabel.setVisible( true );
+      headLabel.setVisible( true );
+      headLabel.setIcon( getImageIcon( "JT_head.gif" ) );
+      nameLabel.setVisible( true );
+      nameLabel.setText( "JT" );
+      animateText( "Darn! You got me.\r\nAlright I'll admit you're pretty decent bruh.\r\n" + 
+      "Here's your reward.", 35, dialogueArea );
+      Timer timer = new Timer( 5000, new ActionListener(){
+        @Override
+        public void actionPerformed( ActionEvent e ) {
+          dialogueArea.setText( "" );
+          headLabel.setIcon( getImageIcon( "Allan_head.png" ) );
+          nameLabel.setText( "Allan" );
+          animateText( "HAHA. What's up with that?\r\nAfraid to shoot?\r\n" + 
+          "You thinkin of donating all dem bricks to the third little pig?", 35, dialogueArea );
+        }
+      } );
+      timer.setRepeats( false );
+      timer.start();
+      timer = new Timer( timer.getDelay() + 6000, new ActionListener(){
+        @Override
+        public void actionPerformed( ActionEvent e ) {
+          dialogueArea.setText( "" );
+          animateText( "Woah an Exodia arm.\r\nWonder why someone would leave this here of all places.\r\n" +
+          "I guess I'll just hang on to it just in case.", 35, dialogueArea );
+        }
+      } );
+      timer.setRepeats( false );
+      timer.start();
+      timer = new Timer( timer.getDelay() + 6000, new ActionListener(){
+        @Override
+        public void actionPerformed( ActionEvent e ) {
+          panel.addMouseListener( new MouseAdapter() {
+            public void mouseClicked( MouseEvent evt ) {
+              bgLabel.setIcon( getImageIcon( "after ball win transition.gif" ) );
+              setNewSong( "sunflower_song" );
+              dialogueArea.setText( "" );
+              animateText( "Man that guy was soft. Heh.\r\nNot sure why I was expecting a challenge honestly.\r\n" +
+              "I wonder where I should search next.", 50, dialogueArea );
+              for( MouseListener m: panel.getMouseListeners() ) {
+                panel.removeMouseListener( m );
+              }
+              Timer timer2 = new Timer( 6500, new ActionListener() {
+                @Override
+                public void actionPerformed( ActionEvent e ) {
+                  choice1.setVisible( true );
+                  choice2.setVisible( true );
+                  choice1.addMouseListener( new MouseAdapter() {
+                    public void mouseClicked( MouseEvent evt ) {
+                      choice1.setVisible( false );
+                      choice2.setVisible( false );
+                      choice1.removeMouseListener( this );
+                      goToDistrict();
+                    }
+                  });
+                  choice2.addMouseListener( new MouseAdapter() {
+                    public void mouseClicked( MouseEvent evt ) {
+                      choice1.setVisible( false );
+                      choice2.setVisible( false );
+                      choice2.removeMouseListener( this );
+                      goToDowntown();
+                    }
+                  });
+                  panel.revalidate();
+                }
+              } );
+              timer2.setRepeats( false );
+              timer2.start();
+            }
+          } );
+        }
+      } );
+      timer.setRepeats( false );
+      timer.start();
+    } else if( counter == 0 ) {
+      bgLabel.setIcon( getImageIcon( "1_chapter1.gif" ) );
+      Timer timer = new Timer( 1500, new ActionListener(){
+        @Override
+        public void actionPerformed( ActionEvent e ) {
+          dialogueArea.setVisible( true );
+          dialogueLabel.setVisible( true );
+          headLabel.setVisible( true );
+          nameLabel.setVisible( true );
+          nameLabel.setText( "JT" );
+          headLabel.setIcon( getImageIcon( "JT_head.gif" ) );
+          animateText( "Hah! Taste it ya weak ass fool!\r\nI hope ya liked eatin my dunks for breakfast!", 35, dialogueArea );
+          Timer timer2 = new Timer( 7000, new ActionListener(){
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+              dialogueArea.setText( "" );
+              animateText( "Yo, you good? You lookin kinda pale there bud.\r\n . . .\r\nBruh? You good?", 50, dialogueArea );
+              Timer timer3 = new Timer( 6500, new ActionListener() {
+                public void actionPerformed( ActionEvent evt ) {
+                  headLabel.setVisible( false );
+                  dialogueArea.setVisible( false );
+                  dialogueLabel.setVisible( false );
+                  nameLabel.setVisible( false );
+                  dialogueArea.setText( "" );
+                  label = new FadeLabel( "1_chapter1.gif", "chapter1 defeat.gif", 3000 );
+                  label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
+                  panel.remove( bgLabel );
+                  panel.add( label );
+                  panel.revalidate();
+                  ( ( FadeLabel )label ).fadeImages();
+                  gameOverDialogue( "chapter1 defeat.gif" );
+                }
+              });
+              timer3.setRepeats( false );
+              timer3.start();
+            }
+          } );
+          timer2.setRepeats( false );
+          timer2.start();
+        }
+      } );
+      timer.setRepeats( false );
+      timer.start();
+    }
+    System.err.println( "GAME HAS ENDED" );
+  }
+
+  public void goToDistrict() {
+    curStage = "district";
+    resetScreen();
+    frame.add( panel );
+    panel.add( choice1 );
+    panel.add( choice2 );
+    panel.add( choice3 );
+    resetChoiceButtons();
+    choice1.setIcon( getImageIcon( "in n out.png" ) );
+    choice2.setIcon( getImageIcon( "lil caesars.png" ) );
+    choice3.setIcon( getImageIcon( "whole foods.png" ) );
+    choice1.setVisible( false );
+    choice2.setVisible( false );
+    choice3.setVisible( false );
+    Timer timer = new Timer( 1000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ){
+        dialogueLabel.setVisible( true );
+        dialogueArea.setVisible( true );
+        headLabel.setVisible( true );
+        headLabel.setIcon( allanHeadImage );
+        nameLabel.setVisible( true );
+        nameLabel.setText( "Allan" );
+        animateText( "Damn it's been a long time.\r\nWonder what happened to Red Robins and Chick-Fil-A?\r\n" + 
+        "Oh well, guess I should eat somewhere else.", 35, dialogueArea );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 6000, new ActionListener() {
+      public void actionPerformed( ActionEvent evt ) {
+        choice1.setVisible( true );
+        choice2.setVisible( true );
+        choice3.setVisible( true );
+        choice1.addActionListener( new DistrictChoiceHandler() );
+        choice2.addActionListener( new DistrictChoiceHandler() );
+        choice3.addActionListener( new DistrictChoiceHandler() );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    bgLabel.setIcon( getImageIcon( "district.gif" ) );
+    panel.add( bgLabel );
+    panel.revalidate();
+  }
+
+  private class DistrictChoiceHandler implements ActionListener {
+    @Override
+    public void actionPerformed( ActionEvent e ) {
+      if( e.getSource().equals( choice1 ) ) {
+        curStage = "in n out";
+        resetChoiceButtonsNoRollover();
+        bgLabel.setIcon( getImageIcon( "inNout.gif" ) );
+        choice1.setIcon( getImageIcon( "burger button.png" ) );
+        choice1.setRolloverIcon( getImageIcon( "burger button h.png" ) );
+        choice2.setIcon( getImageIcon( "soda button.png" ) );
+        choice2.setRolloverIcon( getImageIcon( "soda button h.png" ) );
+        choice3.setVisible( false );
+        choice1.addMouseListener( new FoodRolloverDialogue() );
+        choice2.addMouseListener( new FoodRolloverDialogue() );
+        choice1.addActionListener( new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_burger.gif" ) );
+            chosenFood = "burger";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice2.addActionListener( new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_soda.gif" ) );
+            chosenFood = "soda";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        System.err.println( "in n out" );
+      } else if( e.getSource().equals( choice2 ) ) {
+        curStage = "lil caesars";
+        resetChoiceButtonsNoRollover();
+        bgLabel.setIcon( getImageIcon( "caesars.gif" ) );
+        choice1.setIcon( getImageIcon( "veggie button.png" ) );
+        choice1.setRolloverIcon( getImageIcon( "veggie button h.png" ) );
+        choice2.setIcon( getImageIcon( "pepperoni button.png" ) );
+        choice2.setRolloverIcon( getImageIcon( "pepperoni button h.png" ) );
+        choice3.setVisible( false );
+        choice1.addMouseListener( new FoodRolloverDialogue() );
+        choice2.addMouseListener( new FoodRolloverDialogue() );
+        choice1.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_veggie.gif" ) );
+            chosenFood = "veggie";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice2.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_pepperoni.gif" ) );
+            chosenFood = "pepperoni";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        System.err.println( "lil caesars" );
+      } else if( e.getSource().equals( choice3 ) ) {
+        curStage = "whole foods";
+        resetChoiceButtonsNoRollover();
+        bgLabel.setIcon( getImageIcon( "wholefoods.gif" ) );
+        choice1.setIcon( getImageIcon( "broccoli button.png" ) );
+        choice1.setRolloverIcon( getImageIcon( "broccoli button h.png" ) );
+        choice2.setIcon( getImageIcon( "strawberry button.png" ) );
+        choice2.setRolloverIcon( getImageIcon( "strawberry button h.png" ) );
+        choice3.setIcon( getImageIcon( "watermelon button.png" ) );
+        choice3.setRolloverIcon( getImageIcon( "watermelon button h.png" ) );
+        choice1.addMouseListener( new FoodRolloverDialogue() );
+        choice2.addMouseListener( new FoodRolloverDialogue() );
+        choice3.addMouseListener( new FoodRolloverDialogue() );
+        choice1.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_broccoli.gif" ) );
+            chosenFood = "broccoli";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice2.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_strawberry.gif" ) );
+            chosenFood = "strawberry";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice3.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_watermelon.gif" ) );
+            chosenFood = "watermelon";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        System.err.println( "whole foods" );
+      }
+      dialogueArea.setVisible( false );
+      dialogueLabel.setVisible( false );
+      nameLabel.setVisible( false );
+      headLabel.setVisible( false );
+    }
+  }
+
+  public void goToDowntown() {
+    curStage = "downtown";
+    resetScreen();
+    frame.add( panel );
+    panel.add( choice1 );
+    panel.add( choice2 );
+    panel.add( choice3 );
+    resetChoiceButtons();
+    choice1.setIcon( getImageIcon( "85 degrees button.png" ) );
+    choice2.setIcon( getImageIcon( "coldstone button.png" ) );
+    choice3.setIcon( getImageIcon( "stickyfingers button.png" ) );
+    choice1.setVisible( false );
+    choice2.setVisible( false );
+    choice3.setVisible( false );
+    Timer timer = new Timer( 1000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ){
+        dialogueLabel.setVisible( true );
+        dialogueArea.setVisible( true );
+        headLabel.setVisible( true );
+        headLabel.setIcon( allanHeadImage );
+        nameLabel.setVisible( true );
+        nameLabel.setText( "Allan" );
+        animateText( "Since when did Irvine get this massive?\r\nIt must be due to all those FOB's getting into UCI.\r\n" + 
+        "I should grab a bite to eat while I'm here.", 35, dialogueArea );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 6000, new ActionListener() {
+      public void actionPerformed( ActionEvent evt ) {
+        choice1.setVisible( true );
+        choice2.setVisible( true );
+        choice3.setVisible( true );
+        choice1.addActionListener( new DowntownChoiceHandler() );
+        choice2.addActionListener( new DowntownChoiceHandler() );
+        choice3.addActionListener( new DowntownChoiceHandler() );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    bgLabel.setIcon( getImageIcon( "downtown.gif" ) );
+    panel.add( bgLabel );
+    panel.revalidate();
+  }
+
+  private class DowntownChoiceHandler implements ActionListener {
+    public void actionPerformed( ActionEvent evt ) {
+      if( evt.getSource().equals( choice1 ) ) {
+        curStage = "85 degrees";
+        resetChoiceButtonsNoRollover();
+        bgLabel.setIcon( getImageIcon( "85degree.gif" ) );
+        choice1.setIcon( getImageIcon( "cake button.png" ) );
+        choice1.setRolloverIcon( getImageIcon( "cake button h.png" ) );
+        choice2.setIcon( getImageIcon( "toast button.png" ) );
+        choice2.setRolloverIcon( getImageIcon( "toast button h.png" ) );
+        choice3.setVisible( false );
+        choice1.addMouseListener( new FoodRolloverDialogue() );
+        choice2.addMouseListener( new FoodRolloverDialogue() );
+        choice1.addActionListener( new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_cake.gif" ) );
+            chosenFood = "cake";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice2.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_toast.gif" ) );
+            chosenFood = "toast";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+      } else if( evt.getSource().equals( choice2 ) ) {
+        curStage = "coldstone";
+        resetChoiceButtonsNoRollover();
+        bgLabel.setIcon( getImageIcon( "coldstone.gif" ) );
+        choice1.setIcon( getImageIcon( "icecream button.png" ) );
+        choice1.setRolloverIcon( getImageIcon( "icecream button h.png" ) );
+        choice2.setIcon( getImageIcon( "parfait button.png" ) );
+        choice2.setRolloverIcon( getImageIcon( "parfait button h.png" ) );
+        choice3.setIcon( getImageIcon( "popsicle button.png" ) );
+        choice3.setRolloverIcon( getImageIcon( "popsicle button h.png" ) );
+        choice1.addMouseListener( new FoodRolloverDialogue() );
+        choice2.addMouseListener( new FoodRolloverDialogue() );
+        choice3.addMouseListener( new FoodRolloverDialogue() );
+        choice1.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_icecream.gif" ) );
+            chosenFood = "icecream";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice2.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_parfait.gif" ) );
+            chosenFood = "parfait";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice3.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            choice3.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_popsicle.gif" ) );
+            chosenFood = "popsicle";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+      } else if( evt.getSource().equals( choice3 ) ) {
+        curStage = "stickyfingers";
+        resetChoiceButtonsNoRollover();
+        bgLabel.setIcon( getImageIcon( "stickyfingers.gif" ) );
+        choice1.setIcon( getImageIcon( "custard button.png" ) );
+        choice1.setRolloverIcon( getImageIcon( "custard button h.png" ) );
+        choice2.setIcon( getImageIcon( "brownie button.png" ) );
+        choice2.setRolloverIcon( getImageIcon( "brownie button h.png" ) );
+        choice3.setVisible( false );
+        choice1.addMouseListener( new FoodRolloverDialogue() );
+        choice2.addMouseListener( new FoodRolloverDialogue() );
+        choice1.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_custard.gif" ) );
+            chosenFood = "custard";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+        choice2.addActionListener( new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            choice1.setVisible( false );
+            choice2.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "food_brownie.gif" ) );
+            chosenFood = "brownie";
+            Timer timer = new Timer( 4000, new ActionListener() {
+              public void actionPerformed( ActionEvent evt ) {
+                tubbyEncounter();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          }
+        });
+      }
+      dialogueArea.setVisible( false );
+      dialogueLabel.setVisible( false );
+      nameLabel.setVisible( false );
+      headLabel.setVisible( false );
+    }
+  }
+
+  private class FoodRolloverDialogue extends MouseAdapter {
+    public void mouseEntered( MouseEvent evt ) {
+      if( evt.getSource().equals( choice1 ) && curStage.equals( "in n out" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Quality burger with quality lettuce, quality buns, quality tomato, and quality cheese that you can taste." );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "in n out" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "\"For God so loved the world, that he gave his only begotten Son...\" fOr cOcA CoLa!" );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "whole foods" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Broccoli infused with iron. Disgusting but will definitely prove helpful when trying to prove one's " + 
+        "absolute strength and resolve." );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "whole foods" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Now with 100% more straw!" );
+      } else if( evt.getSource().equals( choice3 ) && curStage.equals( "whole foods" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Now all you need is some fried chicken and grape soda ;)\r\nand you will have yourself a nice ass summer picnic" );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "lil caesars" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Vegetables with a dash of fruity tomato. Now evenly sliced so you know we didn't eat your pizza, unlike " +
+        "Chuck E. Cheeses'" );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "lil caesars" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Only the vilest of the vile and the nastiest of the nast can stomach the will to force this down...." );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "85 degrees" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Fruity tooty cake for birthdays and birthdays only." );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "85 degrees" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Toast made with love and happiness with the goal of sedating even the most despicable of tubbies!" );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "coldstone" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "It says icecream but its a cone. Our GFX guy sucks." );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "coldstone" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Wants to be as tasty and well-liked as icecream but never will be." );
+      } else if( evt.getSource().equals( choice3 ) && curStage.equals( "coldstone" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "HAHH! Slob on this knob!" );
+      } else if( evt.getSource().equals( choice1 ) && curStage.equals( "stickyfingers" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "Ooey Gooey goodness if you're a tubby. idk what other kind of creature would want this" );
+      } else if( evt.getSource().equals( choice2 ) && curStage.equals( "stickyfingers" ) ) {
+        textLabel.setVisible( true );
+        textArea.setVisible( true );
+        textArea.setText( "hey brown isn't so bad after all :D" );
+      }
+    }
+    
+    public void mouseExited( MouseEvent evt ) {
+      textLabel.setVisible( false );
+      textArea.setVisible( false );
+      textArea.setText( null );
+    }
+  }
+
+  private void tubbyEncounter() {
+    curStage = "tubbies";
+    resetScreen();
+    frame.add( panel);
+    panel.add( choice1 );
+    panel.add( choice2 );
+    resetChoiceButtonsNoRollover();
+    choice1.setVisible( false );
+    choice2.setVisible( false );
+    Timer timer = new Timer( 1000, new ActionListener() {
+      public void actionPerformed( ActionEvent evt ) {
+        headLabel.setVisible( true );
+        nameLabel.setVisible( true );
+        dialogueArea.setVisible( true );
+        dialogueLabel.setVisible( true );
+        animateText( "Woah, I don't remember this being here.\r\nHmmm... Maybe Rudraksha is on the other side.", 40, dialogueArea );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    panel.addMouseListener( new MouseAdapter() {
+      public void mouseClicked( MouseEvent evt ) {
+        panel.removeMouseListener( this );
+        bgLabel.setIcon( getImageIcon( "tubby 1.gif" ) );
+        dialogueArea.setText( null );
+        animateText( "Huh?\r\nWhat the heck is that?", 35, dialogueArea );
+        Timer t = new Timer( 3500, new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            headLabel.setIcon( getImageIcon( "Dipsy_head.png" ) );
+            nameLabel.setText( "DIPSY" );
+            dialogueArea.setText( null );
+            animateText( "Eh oh!", 35, dialogueArea );
+          }
+        });
+        t.setRepeats( false );
+        t.start();
+        t = new Timer( t.getDelay() + 3000, new ActionListener() {
+          public void actionPerformed( ActionEvent evt ) {
+            bgLabel.setIcon( getImageIcon( "tubby 2.gif" ) );
+            headLabel.setIcon( allanHeadImage );
+            nameLabel.setText( "Allan" );
+            dialogueArea.setText( null );
+            animateText( "Hey friends that's kinda close don't ya think?", 40, dialogueArea );
+          }
+        });
+        t.setRepeats( false );
+        t.start();
+        t = new Timer( t.getDelay() + 4000, new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            nameLabel.setText( "Tubbies" );
+            headLabel.setIcon( getImageIcon( "Tubbies_head.png" ) );
+            dialogueArea.setText( null );
+            animateText( "Hungy!\r\nYum Yum!", 40, dialogueArea );
+          }
+        });
+        t.setRepeats( false );
+        t.start();
+        t = new Timer( t.getDelay() + 3500, new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            nameLabel.setText( "Allan" );
+            headLabel.setIcon( allanHeadImage );
+            dialogueArea.setText( null );
+            animateText( "Oh you boys hungry now?\r\nHold up, I think I got something y'all are going to like.", 40, dialogueArea );
+          }
+        });
+        t.setRepeats( false );
+        t.start();
+        t = new Timer( t.getDelay() + 5000, new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            choice1.setIcon( getImageIcon( "scarf button.png" ) );
+            choice1.setRolloverIcon( getImageIcon( "scarf button h.png" ) );
+            choice2.setIcon( getImageIcon( "share button.png " ) );
+            choice2.setRolloverIcon( getImageIcon( "share button h.png" ) );
+            choice1.setVisible( true );
+            choice2.setVisible( true );
+            choice1.addActionListener( new TubbyEncounterChoiceHandler() );
+            choice2.addActionListener( new TubbyEncounterChoiceHandler() );
+          }
+        });
+        t.setRepeats( false );
+        t.start();
+      }
+    });
+    bgLabel.setIcon( getImageIcon( "eat transition.jpg" ) );
+    panel.add( bgLabel );
+    setNewSong( "tubby song" );
+    panel.revalidate();
+  }
+
+  private class TubbyEncounterChoiceHandler implements ActionListener {
+    public void actionPerformed( ActionEvent evt ) {
+      stageCnt[ 0 ] = 0;
+      choice1.setVisible( false );
+      choice2.setVisible( false );
+      if( evt.getSource().equals( choice1 ) ) {
+        if( chosenFood.equals( "broccoli" ) || chosenFood.equals( "pepperoni" ) ) {
+          dialogueArea.setVisible( false );
+          nameLabel.setVisible( false );
+          headLabel.setVisible( false );
+          dialogueLabel.setVisible( false );
+          Timer timer = new Timer( 1500, new ActionListener() {
+            public void actionPerformed( ActionEvent evt ) {
+              dialogueArea.setVisible( true );
+              nameLabel.setVisible( true );
+              headLabel.setVisible( true );
+              headLabel.setIcon( getImageIcon( "Tubbies_head.png" ) );
+              dialogueLabel.setVisible( true );
+              nameLabel.setText( "Tubbies" );
+              dialogueArea.setText( null );
+              animateText( "Whoa chill you crazy human.\r\nYeesh.\r\nTake this and leave please.", 35, dialogueArea );
+            }
+          });
+          timer.setRepeats( false );
+          timer.start();
+          panel.addMouseListener( new MouseAdapter() {
+            public void mouseClicked( MouseEvent evt ) {
+              if( stageCnt[ 0 ] == 0 ){
+                stageCnt[ 0 ]++;
+                bgLabel.setIcon( getImageIcon( "tubby win.gif" ) );
+                headLabel.setIcon( allanHeadImage );
+                nameLabel.setText( "Allan" );
+                dialogueArea.setText( null );
+                animationFinished = false;
+                animateText( "Woah the Exodia legs!\r\nWonder how you guys got these.\r\n" + 
+                "Thanks for the gift buddies!", 40, dialogueArea );
+              } else if( stageCnt[ 0 ] == 1 && animationFinished ) {
+                stageCnt[ 0 ]++;
+                bgLabel.setIcon( getImageIcon( "tubby win2.gif" ) );
+                headLabel.setIcon( getImageIcon( "Tubbies_head.png" ) );
+                nameLabel.setText( "Tubbies" );
+                dialogueArea.setText( null );
+                animationFinished = false;
+                animateText( "Guess this is it friend.\r\nGood luck on your future adventures.\r\n" + 
+                "Tubby Bye Bye!", 40, dialogueArea );
+              } else if( stageCnt[ 0 ] == 2 && animationFinished ) {
+                stageCnt[ 0 ]++;
+                headLabel.setIcon( allanHeadImage );
+                nameLabel.setText( "Allan" );
+                dialogueArea.setText( null );
+                animationFinished = false;
+                animateText( "Hey, I can see Woodbridge High School from here.\r\nMaybe Rudraksha is hung up near there.", 40, dialogueArea );
+                bgLabel.setIcon( getImageIcon( "tubby transition.gif" ) );
+              } else if( stageCnt[ 0 ] == 3 && animationFinished ) {
+                stageCnt[ 0 ]++;
+                panel.removeMouseListener( this );
+                headLabel.setVisible( false );
+                nameLabel.setVisible( false );
+                dialogueArea.setVisible( false );
+                dialogueLabel.setVisible( false );
+                goToSchool();
+              }
+            }
+          });
+        } else {
+
+        }
+      } else if( evt.getSource().equals( choice2 ) ) {
+        if( chosenFood.equals( "custard" ) || chosenFood.equals( "toast" ) ) {
+          dialogueArea.setVisible( false );
+          nameLabel.setVisible( false );
+          headLabel.setVisible( false );
+          dialogueLabel.setVisible( false );
+          Timer timer = new Timer( 1500, new ActionListener() {
+            public void actionPerformed( ActionEvent evt ) {
+              dialogueArea.setVisible( true );
+              nameLabel.setVisible( true );
+              headLabel.setVisible( true );
+              headLabel.setIcon( getImageIcon( "Tubbies_head.png" ) );
+              dialogueLabel.setVisible( true );
+              nameLabel.setText( "Tubbies" );
+              dialogueArea.setText( null );
+              animateText( "Whoa chill you crazy human.\r\nYeesh.\r\nTake this and leave please.", 35, dialogueArea );
+            }
+          });
+          timer.setRepeats( false );
+          timer.start();
+          panel.addMouseListener( new MouseAdapter() {
+            public void mouseClicked( MouseEvent evt ) {
+              if( stageCnt[ 0 ] == 0 ){
+                stageCnt[ 0 ]++;
+                bgLabel.setIcon( getImageIcon( "tubby win.gif" ) );
+                headLabel.setIcon( allanHeadImage );
+                nameLabel.setText( "Allan" );
+                dialogueArea.setText( null );
+                animationFinished = false;
+                animateText( "Woah the Exodia legs!\r\nWonder how you guys got these.\r\n" + 
+                "Thanks for the gift buddies!", 40, dialogueArea );
+              } else if( stageCnt[ 0 ] == 1 && animationFinished ) {
+                stageCnt[ 0 ]++;
+                bgLabel.setIcon( getImageIcon( "tubby win2.gif" ) );
+                headLabel.setIcon( getImageIcon( "Tubbies_head.png" ) );
+                nameLabel.setText( "Tubbies" );
+                dialogueArea.setText( null );
+                animationFinished = false;
+                animateText( "Guess this is it friend.\r\nGood luck on your future adventures.\r\n" + 
+                "Tubby Bye Bye!", 40, dialogueArea );
+              } else if( stageCnt[ 0 ] == 2 && animationFinished ) {
+                stageCnt[ 0 ]++;
+                headLabel.setIcon( allanHeadImage );
+                nameLabel.setText( "Allan" );
+                dialogueArea.setText( null );
+                animationFinished = false;
+                animateText( "Hey, I can see Woodbridge High School from here.\r\nMaybe Rudraksha is hung up near there.", 40, dialogueArea );
+                bgLabel.setIcon( getImageIcon( "tubby transition.gif" ) );
+              } else if( stageCnt[ 0 ] == 3 && animationFinished ) {
+                stageCnt[ 0 ]++;
+                panel.removeMouseListener( this );
+                headLabel.setVisible( false );
+                nameLabel.setVisible( false );
+                dialogueArea.setVisible( false );
+                dialogueLabel.setVisible( false );
+                goToSchool();
+              }
+            }
+          });
+        } else {
+
+        }
+      }
+    }
+  }
+
+  private void goToSchool() {
+    resetScreen();
+    frame.add( panel );
+    resetChoiceButtonsNoRollover();
+    bgLabel.setText( "u at school niga" );
+    panel.add( bgLabel );
+    panel.revalidate();
+  }
+
+  private void gameOverDialogue( String gameOverBG ) {
+    setNewSong( "defeat music" );
+    stageCnt[ 0 ] = 0;
+    Timer timer4 = new Timer( 3200, new ActionListener(){
+      @Override
+      public void actionPerformed( ActionEvent e ) {
+        tryAgain = new JButton( getImageIcon( "try again.png" ) );
+        setButtonTransparent( tryAgain );
+        placeComponent( 523, 576, tryAgain );
+        panel.add( tryAgain );
+        tryAgain.addMouseListener( new MenuButtonMouseAdapter() );
+        tryAgain.setVisible( false );
+        panel.remove( label );
+        bgLabel.setIcon( getImageIcon( gameOverBG ) );
+        panel.add( bgLabel );
+        textArea.setVisible( true );
+        textLabel.setVisible( true );
+        panel.revalidate();
+        animateText( "Ah. It seems you have perished from this world.\r\n" + 
+        "Isn't that a shame.\r\n" + "Your journey ends here, adventurer.", 25, textArea );
+      }
+    } );
+    timer4.setRepeats( false );
+    timer4.start();
+    Timer timer5 = new Timer( timer4.getDelay() + 8000, new ActionListener(){
+      @Override
+      public void actionPerformed( ActionEvent e ) {
+        textArea.setText( "" );
+        animateText( "But you mustn't give up.\r\nYour friends are still in danger.\r\n" + 
+        "And you're the only one who can save them.", 25, textArea );
+      }
+    } );
+    timer5.setRepeats( false );
+    timer5.start();
+    Timer timer6 = new Timer( timer5.getDelay() + 7000, new ActionListener() {
+      public void actionPerformed( ActionEvent evt ) {
+        textArea.setText( "" );
+        animateText( "Luckily, we have tech to phase back time.\r\nYou will graciously be given a second chance.\r\n" +
+        "Will you begin your adventure anew?", 25, textArea );
+        panel.addMouseListener( new MouseAdapter() {
+          public void mouseClicked( MouseEvent evt ) {
+            if( stageCnt[ 0 ] == 0 ) {
+              stageCnt[ 0 ]++;
+              textArea.setText( "" );
+              textArea.setVisible( false );
+              textLabel.setVisible( false );
+              tryAgain.setVisible( true );
+              tryAgain.addActionListener( new ActionListener() {
+                public void actionPerformed( ActionEvent evt ) {
+                  tryAgain.setVisible( false );
+                  ImageIcon defeatTransition1 = getImageIcon( "defeat transition1.gif" );
+                  defeatTransition1.getImage().flush();
+                  bgLabel.setIcon( defeatTransition1 );
+                  Timer timer = new Timer( 5000, new ActionListener(){
+                    @Override
+                    public void actionPerformed( ActionEvent e ) {
+                      ImageIcon defeatTransition2 = getImageIcon( "defeat transition2.gif" );
+                      defeatTransition2.getImage().flush();
+                      bgLabel.setIcon( defeatTransition2 );
+                      Timer timer2 = new Timer( 3000, new ActionListener(){
+                        @Override
+                        public void actionPerformed( ActionEvent e ) {
+                          stageCnt[ 0 ]++; //increment to delay retry
+                        }
+                      } );
+                      timer2.setRepeats( false );
+                      timer2.start();
+                    }
+                  } );
+                  timer.setRepeats( false );
+                  timer.start();
+                }
+              } );
+              panel.revalidate();
+            }
+            if( curStage.equals( "ball_game_end" ) && stageCnt[ 0 ] == 2 ) {
+              System.err.println( "resetting to ball game" );
+              startBallGame();
+            }
+          }
+        });
+      }
+    } );
+    timer6.setRepeats( false );
+    timer6.start();
+  }
   private void animateText( String text, int time ) {
     final Timer t = new Timer( time, null );
     t.addActionListener( new ActionListener() {
@@ -1288,24 +2406,65 @@ public class Game extends javafx.application.Application {
     t.addActionListener( new ActionListener() {
       @Override
       public void actionPerformed( ActionEvent evt ) {
-        area.setText( text.substring( 0, stringCounter ) );
-        stringCounter++;
+        try{
+          area.setText( text.substring( 0, stringCounter ) );
+          stringCounter++;
 
-        if( stringCounter > text.length() ) {
-          t.stop();
-          stringCounter = 0;
-          animationFinished = true;
+          if( stringCounter > text.length() ) {
+            t.stop();
+            stringCounter = 0;
+            animationFinished = true;
+            return;
+          }
+        } catch( StringIndexOutOfBoundsException e ) {
           return;
-        }
+        };
       }
     } );
     t.start();
   }
 
+  // resets nearly entire GUI for debugging purposes
+  private void resetAll() {
+    // initializing some important stuff
+    headLabel = new JLabel( allanHeadImage );
+    nameLabel = new JLabel( "Allan" );
+    nameLabel.setPreferredSize( new Dimension( 100, 40 ) );
+    nameLabel.setFont( new Font( "Pixel-Noir", Font.BOLD, 14 ) );
+    nameLabel.setOpaque( false );
+    nameLabel.setForeground( Color.WHITE );
+    headLabel.setPreferredSize( new Dimension( 150, 150 ) );
+    headLabel.setOpaque( false );
+    layout.putConstraint( SpringLayout.WEST, headLabel, 185, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, headLabel, 560, SpringLayout.NORTH, panel );
+    panel.add( headLabel );
+    headLabel.setVisible( false );
+    layout.putConstraint( SpringLayout.WEST, nameLabel, 350, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, nameLabel, 575, SpringLayout.NORTH, panel );
+    panel.add( nameLabel );
+    nameLabel.setVisible( false );
+    choice1 = new JButton();
+    choice2 = new JButton();
+    choice3 = new JButton();
+    choice4 = new JButton();
+    choice5 = new JButton();
+    setButtonTransparent( choice1 );
+    setButtonTransparent( choice2 );
+    setButtonTransparent( choice3 );
+    setButtonTransparent( choice4 );
+    setButtonTransparent( choice5 );
+
+    //stop music
+    mediaPlayer.stop();
+    resetScreen();
+  }
+
   // resets the screen to make it easier to transition between chapters
   private void resetScreen() {
     // resetting frame
+    panel.removeAll();
     frame.remove( panel );
+    frame.getContentPane().removeAll();
     // resetting basics
     animationFinished = false;
     stageCnt[ 0 ] = 0;
@@ -1340,14 +2499,138 @@ public class Game extends javafx.application.Application {
     for( int i = 0; i < mListeners.length; i++ ) {
       dialogueArea.removeMouseListener( mListeners[ i ] );
     }
+    dialogueArea.setFont( new Font( "Pixel-Noir", Font.PLAIN, 15 ) );
     // resetting textArea
     textArea.setText( "" );
     mListeners = textArea.getMouseListeners();
     for( int i = 0; i < mListeners.length; i++ ) {
       textArea.removeMouseListener( mListeners[ i ] );
     }
+    textArea.setFont( new Font( "Pixel-Noir", Font.PLAIN, 15 ) );
     // resetting bgLabel
     bgLabel = new JLabel();
+  }
+
+  // Does not need to add buttons to MenuMouseAdapter because JButton.setRolloverIcon() exists
+  private void resetChoiceButtonsNoRollover() {
+    for( int i = 1; i < choice1.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice1.getMouseListeners();
+      choice1.removeMouseListener( m[ i ] );
+      System.err.println( "Choice1 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice2.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice2.getMouseListeners();
+      choice2.removeMouseListener( m[ i ] );
+      System.err.println( "Choice2 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice3.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice3.getMouseListeners();
+      choice3.removeMouseListener( m[ i ] );
+      System.err.println( "Choice3 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice4.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice4.getMouseListeners();
+      choice4.removeMouseListener( m[ i ] );
+      System.err.println( "Choice4 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice5.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice5.getMouseListeners();
+      choice5.removeMouseListener( m[ i ] );
+      System.err.println( "Choice5 MouseListener Removed" );
+    }
+    for( ActionListener a: choice1.getActionListeners() ) {
+      choice1.removeActionListener( a );
+      System.err.println( "Choice1 ActionListener Removed" );
+    }
+    for( ActionListener a: choice2.getActionListeners() ) {
+      choice2.removeActionListener( a );
+      System.err.println( "Choice2 ActionListener Removed" );
+    }
+    for( ActionListener a: choice3.getActionListeners() ) {
+      choice3.removeActionListener( a );
+      System.err.println( "Choice3 ActionListener Removed" );
+    }
+    for( ActionListener a: choice4.getActionListeners() ) {
+      choice4.removeActionListener( a );
+      System.err.println( "Choice4 ActionListener Removed" );
+    }
+    for( ActionListener a: choice5.getActionListeners() ) {
+      choice5.removeActionListener( a );
+      System.err.println( "Choice5 ActionListener Removed" );
+    }
+    choice1.addMouseListener( new MenuButtonMouseAdapter() );
+    choice2.addMouseListener( new MenuButtonMouseAdapter() );
+    choice3.addMouseListener( new MenuButtonMouseAdapter() );
+    choice4.addMouseListener( new MenuButtonMouseAdapter() );
+    choice5.addMouseListener( new MenuButtonMouseAdapter() );
+    placeComponent( 383, 280, choice2 );
+    layout.putConstraint( SpringLayout.WEST, choice1, 338, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.SOUTH, choice1, 0, SpringLayout.NORTH, choice2 );
+    layout.putConstraint( SpringLayout.WEST, choice3, 428, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, choice3, 0, SpringLayout.SOUTH, choice2 );
+    placeComponent( 383, 260, choice4 );
+    layout.putConstraint( SpringLayout.WEST, choice5, 428, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, choice5, 0, SpringLayout.SOUTH, choice4 );
+  }
+  private void resetChoiceButtons() {
+    for( int i = 1; i < choice1.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice1.getMouseListeners();
+      choice1.removeMouseListener( m[ i ] );
+      System.err.println( "Choice1 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice2.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice2.getMouseListeners();
+      choice2.removeMouseListener( m[ i ] );
+      System.err.println( "Choice2 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice3.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice3.getMouseListeners();
+      choice3.removeMouseListener( m[ i ] );
+      System.err.println( "Choice3 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice4.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice4.getMouseListeners();
+      choice4.removeMouseListener( m[ i ] );
+      System.err.println( "Choice4 MouseListener Removed" );
+    }
+    for( int i = 1; i < choice5.getMouseListeners().length; i++ ) {
+      MouseListener [] m = choice5.getMouseListeners();
+      choice5.removeMouseListener( m[ i ] );
+      System.err.println( "Choice5 MouseListener Removed" );
+    }
+    for( ActionListener a: choice1.getActionListeners() ) {
+      choice1.removeActionListener( a );
+      System.err.println( "Choice1 ActionListener Removed" );
+    }
+    for( ActionListener a: choice2.getActionListeners() ) {
+      choice2.removeActionListener( a );
+      System.err.println( "Choice2 ActionListener Removed" );
+    }
+    for( ActionListener a: choice3.getActionListeners() ) {
+      choice3.removeActionListener( a );
+      System.err.println( "Choice3 ActionListener Removed" );
+    }
+    for( ActionListener a: choice4.getActionListeners() ) {
+      choice4.removeActionListener( a );
+      System.err.println( "Choice4 ActionListener Removed" );
+    }
+    for( ActionListener a: choice5.getActionListeners() ) {
+      choice5.removeActionListener( a );
+      System.err.println( "Choice5 ActionListener Removed" );
+    }
+    choice1.addMouseListener( new MenuButtonMouseAdapter() );
+    choice2.addMouseListener( new MenuButtonMouseAdapter() );
+    choice3.addMouseListener( new MenuButtonMouseAdapter() );
+    choice4.addMouseListener( new MenuButtonMouseAdapter() );
+    choice5.addMouseListener( new MenuButtonMouseAdapter() );
+    placeComponent( 383, 280, choice2 );
+    layout.putConstraint( SpringLayout.WEST, choice1, 338, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.SOUTH, choice1, 0, SpringLayout.NORTH, choice2 );
+    layout.putConstraint( SpringLayout.WEST, choice3, 428, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, choice3, 0, SpringLayout.SOUTH, choice2 );
+    placeComponent( 383, 260, choice4 );
+    layout.putConstraint( SpringLayout.WEST, choice5, 428, SpringLayout.WEST, panel );
+    layout.putConstraint( SpringLayout.NORTH, choice5, 0, SpringLayout.SOUTH, choice4 );
   }
 
   private ImageIcon getImageIcon( String s ) {
@@ -1445,6 +2728,7 @@ public class Game extends javafx.application.Application {
             if( duration >= runningTime ) {
               startTime = -1;
               ( ( Timer ) e.getSource() ).stop();
+              fadeFinished = true;
               alpha = 0f;
             } else {
               alpha = 1f - ( ( float ) duration / ( float ) runningTime );
@@ -1461,7 +2745,7 @@ public class Game extends javafx.application.Application {
       inImage = outImage;
       outImage = tmp;
       timer.start();
-      animationFinished = false;
+      fadeFinished = false;
     }
 
     @Override
@@ -1496,6 +2780,13 @@ public class Game extends javafx.application.Application {
   }
 
   public static void main( String [] args ) {
-    new Game();
+    //new Game();
+
+    SwingUtilities.invokeLater( new Runnable() {
+      @Override
+      public void run() {
+        new Game();
+      }
+    });
   }
 }
