@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -100,7 +101,7 @@ public class Game extends javafx.application.Application {
     label = new FadeLabel( "Main_Screen_Image.gif", "0_company.gif" );
     textArea = new JTextArea( 2, 20 );
     textLabel = new JLabel( getImageIcon( "text set.png" ) );
-    dialogueArea = new JTextArea( 2, 20 );
+    dialogueArea = new JTextArea( 3, 20 );
     dialogueLabel = new JLabel( getImageIcon( "dialogue set.png" ) );
     setButtonTransparent( play );
     setButtonTransparent( credits );
@@ -174,7 +175,8 @@ public class Game extends javafx.application.Application {
     skipIntro.setVisible( false );
     panel.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
     play.addMouseListener( new MenuButtonMouseAdapter() );
-    credits.addMouseListener( new MenuButtonMouseAdapter() );
+    credits.setIcon( creditsButtonImage );
+    credits.setRolloverIcon( creditsHoveredImage );
     exit.addMouseListener( new MenuButtonMouseAdapter() );
     skipIntro.addMouseListener( new MenuButtonMouseAdapter() );
     play.addActionListener( new MenuButtonActionListener() );
@@ -193,13 +195,20 @@ public class Game extends javafx.application.Application {
     frame.setVisible( true );
   }
 
+  private void initMainMenu() {
+    textArea.setFont( textArea.getFont().deriveFont( Font.PLAIN ) );
+    resetScreen();
+    panel.add( mainMenu );
+    frame.add( panel );
+    frame.revalidate();
+    setNewSong( "Blue_Bird_Song" );
+  }
+
   // checking if mouse enters the button for a hover effect
   private class MenuButtonMouseAdapter extends MouseAdapter {
     public void mouseEntered( MouseEvent evt ) {
       if( evt.getSource().equals( play ) ) {
         play.setIcon( playHoveredImage );
-      } else if( evt.getSource().equals( credits ) ) {
-        credits.setIcon( creditsHoveredImage );
       } else if( evt.getSource().equals( exit ) ) {
         exit.setIcon( exitHoveredImage );
       } else if( evt.getSource().equals( skipIntro ) ) {
@@ -245,8 +254,6 @@ public class Game extends javafx.application.Application {
     public void mouseExited( MouseEvent evt ) {
       if( evt.getSource().equals( play ) ) {
         play.setIcon( playButtonImage );
-      } else if( evt.getSource().equals( credits ) ) {
-        credits.setIcon( creditsButtonImage );
       } else if( evt.getSource().equals( exit ) ) {
         exit.setIcon( exitButtonImage );
       } else if( evt.getSource().equals( skipIntro ) ) {
@@ -361,9 +368,39 @@ public class Game extends javafx.application.Application {
         mainMenu.setIcon( null );
         mainMenu.setText( "made by sum peeps" );
         mainMenu.revalidate();
+        
+        resetAll();
+        setNewSong( "credits song" );
+        frame.add( panel );
+        bgLabel.setIcon( getImageIcon( "credits 1.gif" ) );
+        JLabel l1 = new JLabel( getImageIcon( "credits 2.png" ) );
+        JLabel l2 = new JLabel( getImageIcon( "credits 3.gif" ) );
+        JLabel l3 = new JLabel( getImageIcon( "credits 5.gif" ) );
+        JLabel l4 = new JLabel( getImageIcon( "credits 4.gif" ) );
+        JButton back = new JButton( getImageIcon( "Back Button.png" ) );
+        back.setRolloverIcon( getImageIcon( "Back Button Hovered.png" ) );
+        back.addActionListener( new ActionListener() {
+          @Override
+          public void actionPerformed( ActionEvent evt ) {
+            initMainMenu();
+          }
+        });
+        setButtonTransparent( back );
+        panel.add( back );
+        layout.putConstraint( SpringLayout.SOUTH, back, 0, SpringLayout.SOUTH, panel );
+        panel.add( l4 );
+        layout.putConstraint( SpringLayout.EAST, l4, 0, SpringLayout.EAST, panel );
+        panel.add( l3 );
+        panel.add( l2 );
+        layout.putConstraint( SpringLayout.WEST, l2, 440, SpringLayout.WEST, panel );
+        layout.putConstraint( SpringLayout.NORTH, l2, 5, SpringLayout.NORTH, panel );
+        panel.add( l1 );
+        layout.putConstraint( SpringLayout.WEST, l1, 443, SpringLayout.WEST, panel );
+        panel.add( bgLabel );
+        panel.revalidate();
         */
         resetAll();
-        goToGym( true );
+        afterCh1Boss( true );
       } else if( evt.getSource().equals( exit ) ) {
         frame.dispatchEvent( new java.awt.event.WindowEvent( frame, java.awt.event.WindowEvent.WINDOW_CLOSING ) );
       } else if( evt.getSource().equals( secretButt ) ) {
@@ -1163,7 +1200,7 @@ public class Game extends javafx.application.Application {
       dialogueLabel.setVisible( false );
       nameLabel.setVisible( false );
       if( e.getSource().equals( choice1 ) ) {
-        if( ( ( int )( Math.random() * 10 + 1 ) ) <= 9 ) { // 40% chance 3 pt     //CHANGE LATER
+        if( ( ( int )( Math.random() * 10 + 1 ) ) <= 4 ) { // 40% chance 3 pt     //CHANGE LATER
           ballScore += 3;
           int shotNumber = ( int )( Math.random() * 2 ) + 1;
           ImageIcon shot = getImageIcon( "allan 3 pt_" + shotNumber + ".gif" );
@@ -1610,7 +1647,7 @@ public class Game extends javafx.application.Application {
                   dialogueLabel.setVisible( false );
                   nameLabel.setVisible( false );
                   dialogueArea.setText( "" );
-                  label = new FadeLabel( "1_chapter1.gif", "BLACK.png", 3000 );
+                  label = new FadeLabel( "1_chapter1.gif", "BLACK.gif", 3000 );
                   label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                   panel.remove( bgLabel );
                   panel.add( label );
@@ -1624,7 +1661,7 @@ public class Game extends javafx.application.Application {
                 @Override
                 public void actionPerformed( ActionEvent e ) {
                   panel.remove( label );
-                  label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 3000 );
+                  label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 3000 );
                   label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                   panel.add( label );
                   panel.revalidate();
@@ -2213,7 +2250,7 @@ public class Game extends javafx.application.Application {
         t.start();
       }
     });
-    bgLabel.setIcon( getImageIcon( "eat transition.png" ) );
+    bgLabel.setIcon( getImageIcon( "eat transition.gif" ) );
     panel.add( bgLabel );
     setNewSong( "tubby song" );
     panel.revalidate();
@@ -2333,7 +2370,7 @@ public class Game extends javafx.application.Application {
           timer = new Timer( timer.getDelay() + 5000, new ActionListener(){
             @Override
             public void actionPerformed( ActionEvent e ) {
-              label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 3000 );
+              label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 3000 );
               label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
               panel.remove( bgLabel );
               panel.add( label );
@@ -2455,7 +2492,7 @@ public class Game extends javafx.application.Application {
           timer = new Timer( timer.getDelay() + 5000, new ActionListener(){
             @Override
             public void actionPerformed( ActionEvent e ) {
-              label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 3000 );
+              label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 3000 );
               label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
               panel.remove( bgLabel );
               panel.add( label );
@@ -2928,7 +2965,7 @@ public class Game extends javafx.application.Application {
           textArea.setVisible( false );
           textArea.setText( null );
           textLabel.setVisible( false );
-          bgLabel.setIcon( getImageIcon( "cave 1.png" ) );
+          bgLabel.setIcon( getImageIcon( "cave 1.gif" ) );
           panel.revalidate();
           Timer timer = new Timer( 1500, new ActionListener(){
             @Override
@@ -3095,26 +3132,13 @@ public class Game extends javafx.application.Application {
                     dialogueLabel.setVisible( false );
                     nameLabel.setVisible( false );
                     dialogueArea.setText( null );
-                    label = new FadeLabel( "cave 5 fight.gif", "BLACK.png", 2000 );
+                    label = new FadeLabel( "cave 5 fight.png", "chapter1 defeat.gif", 2000 );
                     label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                     panel.remove( bgLabel );
                     panel.add( label );
                     panel.revalidate();
                     ( ( FadeLabel )label ).fadeImages();
-                    Timer timer2 = new Timer( 2100, new ActionListener(){
-                      @Override
-                      public void actionPerformed( ActionEvent e ) {
-                        panel.remove( label );
-                        label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 2000 );
-                        label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
-                        panel.add( label );
-                        panel.revalidate();
-                        ( ( FadeLabel)label ).fadeImages();
-                        gameOverDialogue( "chapter1 defeat.gif" );
-                      }
-                    });
-                    timer2.setRepeats( false );
-                    timer2.start();
+                    gameOverDialogue( "chapter1 defeat.gif" );
                   }
                 });
                 timer.setRepeats( false );
@@ -3166,7 +3190,7 @@ public class Game extends javafx.application.Application {
           });
           timer.setRepeats( false );
           timer.start();
-          timer = new Timer( 3000, new ActionListener(){
+          timer = new Timer( 6000, new ActionListener(){
             @Override
             public void actionPerformed( ActionEvent e ) {
               stageCnt[ 0 ] = 0;
@@ -3206,7 +3230,7 @@ public class Game extends javafx.application.Application {
                     dialogueLabel.setVisible( false );
                     nameLabel.setVisible( false );
                     dialogueArea.setText( null );
-                    label = new FadeLabel( "cave 1_2 winds.gif", "BLACK.png", 2000 );
+                    label = new FadeLabel( "cave 1_2 winds.gif", "BLACK.gif", 2000 );
                     label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                     panel.remove( bgLabel );
                     panel.add( label );
@@ -3216,7 +3240,7 @@ public class Game extends javafx.application.Application {
                       @Override
                       public void actionPerformed( ActionEvent e ) {
                         panel.remove( label );
-                        label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 2000 );
+                        label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 2000 );
                         label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                         panel.add( label );
                         panel.revalidate();
@@ -3245,7 +3269,7 @@ public class Game extends javafx.application.Application {
           Timer timer = new Timer( 3000, new ActionListener(){
             @Override
             public void actionPerformed( ActionEvent e ) {
-              bgLabel.setIcon( getImageIcon( "cave 2_1.gif " ) );
+              bgLabel.setIcon( getImageIcon( "cave 2_1.gif" ) );
             }
           });
           timer.setRepeats( false );
@@ -3414,17 +3438,17 @@ public class Game extends javafx.application.Application {
           nameLabel.setText( "Allan" );
           headLabel.setIcon( allanHeadImage );
           if( e.getSource().equals( choice4 ) ) {
-            bgLabel.setIcon( getImageIcon( "cave 5_2 crack.gif" ) ); //upstream
+            bgLabel.setIcon( getImageIcon( "cave 5_2 crack.gif" ) );
           } else if( e.getSource().equals( choice1 ) ) {
-            ImageIcon img = getImageIcon( "cave 5_2 pillars.gif" ); //crack
+            bgLabel.setIcon( getImageIcon( "cave 5_2 pillars.gif" ) );
+          } else if( e.getSource().equals( choice3 ) ) {
+            bgLabel.setIcon( getImageIcon( "cave 5_2 downstream.gif" ) );
+          } else if( e.getSource().equals( choice5 ) ) {
+            ImageIcon img = getImageIcon( "cave 5_2 door.gif" );
             img.getImage().flush();
             bgLabel.setIcon( img );
-          } else if( e.getSource().equals( choice3 ) ) {
-            bgLabel.setIcon( getImageIcon( "cave 5_2 downstream.gif" ) ); //pillars
-          } else if( e.getSource().equals( choice5 ) ) {
-            bgLabel.setIcon( getImageIcon( "cave 5_2 door.gif" ) );//downstream
           } else if( e.getSource().equals( choice2 ) ) { //correct
-            ImageIcon img = getImageIcon( "cave 5_2 upstream.gif" ); //door
+            ImageIcon img = getImageIcon( "cave 5_2 upstream.gif" );
             img.getImage().flush();
             bgLabel.setIcon( img );
           }
@@ -3501,7 +3525,7 @@ public class Game extends javafx.application.Application {
                     dialogueLabel.setVisible( false );
                     nameLabel.setVisible( false );
                     headLabel.setVisible( false );
-                    label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 2000 );
+                    label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 2000 );
                     label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                     panel.remove( bgLabel );
                     panel.add( label );
@@ -3539,7 +3563,7 @@ public class Game extends javafx.application.Application {
               dialogueLabel.setVisible( true );
               if( e.getSource().equals( choice1 ) ) {
                 animateText( "Nope. Learned my lesson. I'm lookin!\r\nHeh. Nice try you dumb grub!", 35, dialogueArea, false );
-                Timer t = new Timer( 10000, new ActionListener() {
+                Timer t = new Timer( 9000, new ActionListener() {
                   @Override
                   public void actionPerformed( ActionEvent event ) {
                     dialogueArea.setText( null );
@@ -3556,7 +3580,7 @@ public class Game extends javafx.application.Application {
                     dialogueLabel.setVisible( false );
                     nameLabel.setVisible( false );
                     dialogueArea.setText( null );
-                    label = new FadeLabel( "cave 6_5 worm.gif", "BLACK.png", 2000 );
+                    label = new FadeLabel( "cave 6_5 worm.png", "BLACK.gif", 2000 );
                     label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                     panel.remove( bgLabel );
                     panel.add( label );
@@ -3570,7 +3594,7 @@ public class Game extends javafx.application.Application {
                   @Override
                   public void actionPerformed( ActionEvent e ) {
                     panel.remove( label );
-                    label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 3000 );
+                    label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 2000 );
                     label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                     panel.add( label );
                     panel.revalidate();
@@ -3742,7 +3766,7 @@ public class Game extends javafx.application.Application {
           textArea.setVisible( true );
           textLabel.setVisible( true );
           animateText( "Allan approaches a long abandoned mineshaft. Soft winds carry chilling sounds from the dark and dingy cave. " +
-          "Our hero musters up the strength to proceed!", 35 );
+          "Our heros muster up the strength to proceed!", 35 );
         }
       } else if( curStage.equals( "cave 3" ) ) {
         if( stageCnt[ 0 ] == 4 && animationFinished ) {
@@ -3830,7 +3854,7 @@ public class Game extends javafx.application.Application {
           timer = new Timer( timer.getDelay() + 4500, new ActionListener(){
             @Override
             public void actionPerformed( ActionEvent e ) {
-              label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 2000 );
+              label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 2000 );
               label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
               panel.remove( bgLabel );
               panel.add( label );
@@ -3863,7 +3887,7 @@ public class Game extends javafx.application.Application {
               nameLabel.setText( "Allan" );
               headLabel.setVisible( true );
               headLabel.setIcon( allanHeadImage );
-              animateText( "Yo! Gross! What are these!?", 35, dialogueArea, false );
+              animateText( "Yo! Gross! What are those!?", 35, dialogueArea, false );
             }
           });
           timer.setRepeats( false );
@@ -3918,7 +3942,7 @@ public class Game extends javafx.application.Application {
             timer = new Timer( timer.getDelay() + 5000, new ActionListener(){
               @Override
               public void actionPerformed( ActionEvent e ) {
-                label = new FadeLabel( "BLACK.png", "chapter1 defeat.gif", 2000 );
+                label = new FadeLabel( "BLACK.gif", "chapter1 defeat.gif", 2000 );
                 label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
                 panel.remove( bgLabel );
                 panel.add( label );
@@ -4184,7 +4208,7 @@ public class Game extends javafx.application.Application {
           });
           timer.setRepeats( false );
           timer.start();
-          timer = new Timer( timer.getDelay() + 5000, new ActionListener(){
+          timer = new Timer( timer.getDelay() + 5500, new ActionListener(){
             @Override
             public void actionPerformed( ActionEvent e ) {
               choice1.setVisible( true );
@@ -4224,13 +4248,13 @@ public class Game extends javafx.application.Application {
           nameLabel.setVisible( false );
           headLabel.setVisible( false );
           bgLabel.setIcon( getImageIcon( "cave 6_7 exit.gif" ) );
-          Timer timer = new Timer( 1000, new ActionListener(){
+          Timer timer = new Timer( 1000, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
               textArea.setVisible( true );
               textLabel.setVisible( true );
               animateText( "Allan follows the sound of water and stumbles upon a large waterfall. As he looks up...\r\n"+
-              "He is greeted by sunlight.", 35, dialogueArea );
+              "He is greeted by sunlight.", 35 );
             }
           });
           timer.setRepeats( false );
@@ -4272,25 +4296,903 @@ public class Game extends javafx.application.Application {
     bgLabel.setIcon( getImageIcon( "ch1 boss 1.gif" ) );
     panel.add( bgLabel );
     panel.revalidate();
+    setNewSong( "ch1 boss start" );
+    animationFinished = false;
     Timer timer = new Timer( 1000, new ActionListener(){
-    
       @Override
       public void actionPerformed( ActionEvent e ) {
         textArea.setVisible( true );
         textLabel.setVisible( true );
         animateText( "A large mass of trees greet Allan near the exit of the cave. "+
-        "He follows the river until he reaches a small bridge along the path. The end draws near.", 35, dialogueArea );
+        "He follows the river until he reaches a small bridge along the path. The end draws near.", 35 );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    SlidePuzzleGUI puzzle = new SlidePuzzleGUI();
+    panel.addMouseListener( new MouseAdapter() {
+      @Override
+      public void mouseClicked( MouseEvent evt ) {
+        if( animationFinished ) {
+          animationFinished = false;
+          if( stageCnt[ 0 ] == 0 ) {
+            stageCnt[ 0 ]++;
+            bgLabel.setIcon( getImageIcon( "ch1 boss 2.gif" ) );
+            textArea.setVisible( false );
+            textArea.setText( null );
+            textLabel.setVisible( false );
+            Timer timer = new Timer( 1000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                nameLabel.setVisible( true );
+                headLabel.setVisible( true );
+                animateText( "I hope Steve made it out alright.\r\nCome to think of it...\r\n" +
+                "I hope Rudy made it out as well.", 35, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 6000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                nameLabel.setText( "???" );
+                headLabel.setIcon( null );
+                animateText( "HELP!", 25, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 3000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                nameLabel.setText( "Allan" );
+                headLabel.setIcon( allanHeadImage );
+                animateText( "Huh? Who was that?", 35, dialogueArea );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          } else if( stageCnt[ 0 ] == 1 ) {
+            stageCnt[ 0 ]++;
+            bgLabel.setIcon( getImageIcon( "ch1 boss 3.gif" ) );
+            dialogueArea.setVisible( false );
+            dialogueArea.setText( null );
+            dialogueLabel.setVisible( false );
+            headLabel.setVisible( false );
+            nameLabel.setVisible( false );
+            Timer timer = new Timer( 1000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                nameLabel.setVisible( true );
+                headLabel.setVisible( true );
+                animateText( "YOU!", 25, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 3000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                nameLabel.setText( "Seto Kaiba" );
+                headLabel.setIcon( getImageIcon( "Kaiba_head.png" ) );
+                animateText( "Who me?\r\nMove along peasant.\r\nI must deliver this prisoner to justice.", 35, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 6000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                nameLabel.setText( "Rudy" );
+                headLabel.setIcon( getImageIcon( "Rudy_head.png" ) );
+                animateText( "ALLAN IT'S ME.\r\nHelp!", 35, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 4000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                nameLabel.setText( "Allan" );
+                headLabel.setIcon( allanHeadImage );
+                animateText( "Let my friend go you fiend!", 35, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 4000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                nameLabel.setText( "Seto Kaiba" );
+                headLabel.setIcon( getImageIcon( "Kaiba_head.png" ) );
+                animateText( "FIEND? HAH!\r\nNope, I don't think I will.", 35, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 4000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                nameLabel.setText( "Allan" );
+                headLabel.setIcon( allanHeadImage );
+                animateText( "That's it. You asked for it...\r\n\r\nIT'S TIME TO DUEL!", 20, dialogueArea );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          } else if( stageCnt[ 0 ] == 2 ) {
+            stageCnt[ 0 ]++;
+            dialogueArea.setText( null );
+            dialogueArea.setVisible( false );
+            dialogueLabel.setVisible( false );
+            nameLabel.setVisible( false );
+            headLabel.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "ch1 boss 4.gif" ) );
+            Timer timer = new Timer( 1000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                headLabel.setIcon( getImageIcon( "Kaiba_head.png" ) );
+                headLabel.setVisible( true );
+                nameLabel.setText( "Seto Kaiba" );
+                nameLabel.setVisible( true );
+                animateText( "Fine I'll play your game you imbecil.\r\nSince you challenged me, I shall take the liberty of going first.\r\n" + 
+                "Enjoy my display of strength for it may be your last!", 35, dialogueArea );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          } else if( stageCnt[ 0 ] == 3 ) {
+            stageCnt[ 0 ]++;
+            dialogueArea.setText( null );
+            dialogueArea.setVisible( false );
+            dialogueLabel.setVisible( false );
+            nameLabel.setVisible( false );
+            headLabel.setVisible( false );
+            ImageIcon img = getImageIcon( "ch1 boss 5.gif" );
+            img.getImage().flush();
+            bgLabel.setIcon( img );
+            Timer timer = new Timer( 3000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                headLabel.setIcon( getImageIcon( "Kaiba_head.png" ) );
+                headLabel.setVisible( true );
+                nameLabel.setText( "Seto Kaiba" );
+                nameLabel.setVisible( true );
+                animateText( "My move! I first play the spell Dragon Shrine and send two dragons to the graveyard. " + 
+                "Next, I activate Monster Reborn and special summon Blue-Eyes White Dragon.", 35, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 10500, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                animateText( "You're lucky I can't attack when going first, " + 
+                "so I guess that concludes my turn.\r\n\r\nYour move.", 35, dialogueArea );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          } else if( stageCnt[ 0 ] == 4 ) {
+            stageCnt[ 0 ]++;
+            dialogueArea.setText( null );
+            dialogueArea.setVisible( false );
+            dialogueLabel.setVisible( false );
+            nameLabel.setVisible( false );
+            headLabel.setVisible( false );
+            bgLabel.setIcon( getImageIcon( "ch1 boss 6.gif" ) );
+            Timer timer = new Timer( 1000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                headLabel.setIcon( allanHeadImage );
+                nameLabel.setText( "Allan" );
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                headLabel.setVisible( true );
+                nameLabel.setVisible( true );
+                animateText( "Aw crap if I don't do something quick he's going to attack and win next turn!\r\n" + 
+                "My only hope is to believe in the Heart of the Cards and draw and assemble Exodia.\r\n" +
+                "Here goes nothing!", 35, dialogueArea );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          } else if( stageCnt[ 0 ] == 5 ) {
+            stageCnt[ 0 ]++;
+            // slide duel
+            panel.removeMouseListener( this );
+            resetScreen();
+            setNewSong( "ch1 boss battle" );
+            frame.setContentPane( puzzle );
+            frame.revalidate();
+            puzzle.getTimer().start();
+          }
+        }
+      }
+    });
+  }
+
+  private void afterCh1Boss( boolean playerWin ) {
+    resetScreen();
+    frame.add( panel );
+    animationFinished = false;
+    if( playerWin ) {
+      bgLabel.setIcon( getImageIcon( "exodia final.png" ) );
+      panel.add( bgLabel );
+      frame.revalidate();
+      Timer timer = new Timer( 1000, new ActionListener() {
+        @Override
+        public void actionPerformed( ActionEvent e ){
+          panel.addMouseListener( new Chapter1EndMouseListener() );
+        }
+      });
+      timer.setRepeats( false );
+      timer.start();
+    } else {
+      //setNewSong( "ch1 boss start" );
+      bgLabel.setIcon( getImageIcon( "ch1 boss 6.gif" ) );
+      panel.add( bgLabel );
+      frame.revalidate();
+      Timer timer = new Timer( 1000, new ActionListener(){
+        @Override
+        public void actionPerformed( ActionEvent e ) {
+          dialogueArea.setVisible( true );
+          dialogueLabel.setVisible( true );
+          headLabel.setIcon( getImageIcon( "Kaiba_head.png" ) );
+          headLabel.setVisible( true );
+          nameLabel.setText( "Seto Kaiba" );
+          nameLabel.setVisible( true );
+          animateText( "HAH! You reek of weakness.\r\nNOW observe true STRENGTH!", 35, dialogueArea );
+        }
+      });
+      timer.setRepeats( false );
+      timer.start();
+      panel.addMouseListener( new MouseAdapter() {
+        @Override
+        public void mouseClicked( MouseEvent evt ) {
+          if( animationFinished ) {
+            panel.removeMouseListener( this );
+            dialogueArea.setText( null );
+            bgLabel.setIcon( getImageIcon( "ch1 boss lose1.gif" ) );
+            animateText( "Blue-Eyes White Dragon!\r\n\r\nBURST STREAM OF DESTRUCTION!", 35, dialogueArea );
+            Timer t = new Timer( 4000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                bgLabel.setIcon( getImageIcon( "ch1 boss lose2.gif" ) );
+              }
+            });
+            t.setRepeats( false );
+            t.start();
+            t = new Timer( t.getDelay() + 3000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setVisible( false );
+                dialogueArea.setText( null );
+                nameLabel.setVisible( false );
+                headLabel.setVisible( false );
+                dialogueLabel.setVisible( false );
+                label = new FadeLabel( "ch1 boss lose2.gif", "chapter1 defeat.gif", 3000 );
+                label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
+                panel.remove( bgLabel );
+                panel.add( label );
+                panel.revalidate();
+                ( ( FadeLabel )label ).fadeImages();
+                gameOverDialogue( "chapter1 defeat.gif" );
+              }
+            });
+            t.setRepeats( false );
+            t.start();
+          }
+        }
+      });
+    }
+  }
+
+  private class Chapter1EndMouseListener extends MouseAdapter {
+    @Override
+    public void mouseClicked( MouseEvent evt ) {
+      if( animationFinished ) {
+        dialogueArea.setVisible( false );
+        dialogueArea.setText( null );
+        dialogueLabel.setVisible( false );
+        nameLabel.setVisible( false );
+        headLabel.setVisible( false );
+        textArea.setVisible( false );
+        textArea.setText( null );
+        textLabel.setVisible( false );
+      }
+      if( stageCnt[ 0 ] == 0 ) {
+        stageCnt[ 0 ]++;
+        bgLabel.setIcon( getImageIcon( "ch1 boss 6.5.gif" ) );
+        Timer timer = new Timer( 1000, new ActionListener(){
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            dialogueArea.setVisible( true );
+            dialogueLabel.setVisible( true );
+            headLabel.setVisible( true );
+            headLabel.setIcon( allanHeadImage );
+            nameLabel.setVisible( true );
+            nameLabel.setText( "Allan" );
+            animateText( "I've assembled all the 5 needed cards!", 35, dialogueArea );
+          }
+        });
+        timer.setRepeats( false );
+        timer.start();
+      } else if( stageCnt[ 0 ] == 1 && animationFinished ) {
+        stageCnt[ 0 ]++;
+        bgLabel.setIcon( getImageIcon( "ch1 boss 7.gif" ) );
+        Timer timer = new Timer( 1000, new ActionListener() {
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            dialogueArea.setVisible( true );
+            dialogueLabel.setVisible( true );
+            headLabel.setVisible( true );
+            nameLabel.setVisible( true );
+            headLabel.setIcon( getImageIcon( "Kaiba_head.png" ) );
+            nameLabel.setText( "Seto Kaiba" );
+            dialogueArea.setText( null );
+            animateText( "NO WAY!\r\nIT'S EXODIA!\r\nNO ONE'S EVER BEEN ABLE TO CALL HIM!", 35, dialogueArea );
+          }
+        });
+        timer.setRepeats( false );
+        timer.start();
+      } else if( stageCnt[ 0 ] == 2 && animationFinished ) {
+        stageCnt[ 0 ]++;
+        bgLabel.setIcon( getImageIcon( "ch1 boss 8.gif" ) );
+        Timer timer = new Timer( 1000, new ActionListener() {
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            dialogueArea.setVisible( true );
+            dialogueLabel.setVisible( true );
+            headLabel.setVisible( true );
+            headLabel.setIcon( allanHeadImage );
+            nameLabel.setVisible( true );
+            nameLabel.setText( "Allan" );
+            animateText( "HAH! Weak...\r\n\r\nExodia! OBLITERATE!!!", 35, dialogueArea );
+          }
+        });
+        timer.setRepeats( false );
+        timer.start();
+      } else if( stageCnt[ 0 ] == 3 && animationFinished ) {
+        stageCnt[ 0 ]++;
+        bgLabel.setIcon( getImageIcon( "ch1 boss 9.gif" ) );
+        Timer timer = new Timer( 500, new ActionListener() {
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            dialogueArea.setVisible( true );
+            dialogueLabel.setVisible( true );
+            headLabel.setVisible( true );
+            nameLabel.setVisible( true );
+            headLabel.setIcon( getImageIcon( "Kaiba_head.png" ) );
+            nameLabel.setText( "Seto Kaiba" );
+            dialogueArea.setText( null );
+            animateText( "IMPOSSIBLE!\r\nNOOOOOOOOOOO!", 35, dialogueArea );
+          }
+        });
+        timer.setRepeats( false );
+        timer.start();
+      } else if( stageCnt[ 0 ] == 4 && animationFinished ) {
+        stageCnt[ 0 ]++;
+        panel.removeMouseListener( this );
+        bgLabel.setIcon( getImageIcon( "ch1 boss 10.gif" ) );
+        setNewSong( "ch1 boss win" );
+        Timer timer = new Timer( 1000, new ActionListener() {
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            dialogueArea.setVisible( true );
+            dialogueLabel.setVisible( true );
+            headLabel.setVisible( true );
+            headLabel.setIcon( getImageIcon( "Rudy_head.png" ) );
+            nameLabel.setVisible( true );
+            nameLabel.setText( "Rudy" );
+            animateText( "DUDE WHAT WAS THAT!\r\nTHAT WAS EPIC!\r\nTHANKS FOR SAVING ME!", 35, dialogueArea );
+          }
+        });
+        timer.setRepeats( false );
+        timer.start();
+        ch1EndDialogue();
+      }
+      animationFinished = false;
+    }
+  }
+
+  private void ch1EndDialogue() {
+    ImageIcon rudyHeadImage = getImageIcon( "Rudy_head.png" );
+    panel.addMouseListener( new MouseAdapter() {
+      @Override
+      public void mouseClicked( MouseEvent evt ) {
+        if( animationFinished ) {
+          animationFinished = false;
+          dialogueArea.setText( null );
+          if( stageCnt[ 0 ] == 5 ) {
+            nameLabel.setText( "Allan" );
+            headLabel.setIcon( allanHeadImage );
+            animateText( "No problem bro, but I have some questions...\r\nTo put it simply, what happened while I was gone?", 35, dialogueArea );
+          } else if( stageCnt[ 0 ] == 6 ) {
+            nameLabel.setText( "Rudy" );
+            headLabel.setIcon( rudyHeadImage );
+            animateText( "I don't know man...\r\nIt just happened suddenly one day.\r\n" +
+            "These childhood icons just sprang to life out of nowhere.", 35, dialogueArea, false );
+            Timer timer = new Timer( 7000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                dialogueArea.setText( null );
+                animateText( "Soon after I couldn't keep in touch with anyone...\r\n" + 
+                "And before I knew it, I was captured by that dude you just beat!\r\nI hope everyone else is okay....", 35, dialogueArea );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          } else if( stageCnt[ 0 ] == 7 ) {
+            nameLabel.setText( "Allan" );
+            headLabel.setIcon( allanHeadImage );
+            animateText( "Interesting...\r\nAnyways, I believe I know where Jonathan is.\r\nRecalling the hint...", 35, dialogueArea );
+          } else if( stageCnt[ 0 ] == 8 ) {
+            nameLabel.setVisible( false );
+            headLabel.setVisible( false );
+            dialogueArea.setVisible( false );
+            dialogueLabel.setVisible( false );
+            textArea.setVisible( true );
+            textLabel.setVisible( true );
+            Font font = textArea.getFont();
+            textArea.setFont( font.deriveFont( Font.ITALIC ) );
+            animateText( "\"Second is thou large fella, lost in a vastness of green, seeking divine light\"", 35 );
+          } else if( stageCnt[ 0 ] == 9 ) {
+            textArea.setVisible( false );
+            textArea.setText( null );
+            textLabel.setVisible( false );
+            Font font = textArea.getFont();
+            textArea.setFont( font.deriveFont( Font.PLAIN ) );
+            dialogueArea.setVisible( true );
+            dialogueLabel.setVisible( true );
+            headLabel.setIcon( rudyHeadImage );
+            headLabel.setVisible( true );
+            nameLabel.setText( "Rudy" );
+            nameLabel.setVisible( true );
+            animateText( "That's gotta be Jonathan!\r\nHe's got to be somewhere in this dense forest! Or is it a jungle?\r\n" + 
+            "The dude that captured me also mentioned a light that we must head towards.", 35, dialogueArea );
+          } else if( stageCnt[ 0 ] == 10 ) {
+            headLabel.setIcon( allanHeadImage );
+            nameLabel.setText( "Allan" );
+            animateText( "A light you say...\r\nWhatever it is, we must find it.\r\n" +
+            "Jonathan must be near it if he is also searching for it.", 35, dialogueArea );
+          } else if( stageCnt[ 0 ] == 11 ) {
+            headLabel.setIcon( rudyHeadImage );
+            nameLabel.setText( "Rudy" );
+            animateText( "Alright!\r\nI'm pumped!\r\nLET'S GO SAVE OUR FRIENDS!", 35, dialogueArea );
+          } else if( stageCnt[ 0 ] == 12 ) {
+            headLabel.setIcon( allanHeadImage );
+            nameLabel.setText( "Allan" );
+            animateText( "YEAH! ONWARDS!\r\nFollow me closely.\r\nThis is going to be a dangerous ride...", 35, dialogueArea, false );
+            Timer timer = new Timer( 5000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                mediaPlayer.stop();
+                dialogueArea.setVisible( false );
+                dialogueArea.setText( null );
+                nameLabel.setVisible( false );
+                headLabel.setVisible( false );
+                dialogueLabel.setVisible( false );
+                label = new FadeLabel( "ch1 boss 10.gif", "BLACK.gif", 3000 );
+                label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
+                panel.remove( bgLabel );
+                panel.add( label );
+                panel.revalidate();
+                ( ( FadeLabel )label ).fadeImages();
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 5000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                panel.remove( label );
+                bgLabel.setIcon( getImageIcon( "BLACK.gif" ) );
+                panel.add( bgLabel );
+                panel.revalidate();
+                nameLabel.setText( "||||||||||||||||||||||||||"); // 26
+                nameLabel.setVisible( true );
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                animateText( "It would seem as he has surpassed the first trial my liege....\r\n" + 
+                "What shall we do about this pest?", 50, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 8000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                nameLabel.setText( "[||||||||||]" );
+                nameLabel.setForeground( Color.BLACK );
+                animateText( "Not to worry my child.\r\nThis is just the beginning.\r\n" +
+                "He will soon learn his place in the world.", 50, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 7500, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                animateText( "They will all learn soon enough...\r\n", 50, dialogueArea, false );
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 5000, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent e ) {
+                nameLabel.setForeground( Color.WHITE );
+                nameLabel.setVisible( false );
+                dialogueLabel.setVisible( false );
+                dialogueArea.setVisible( false );
+                animationFinished = true;
+              }
+            });
+            timer.setRepeats( false );
+            timer.start();
+          } else if( stageCnt[ 0 ] == 13 ) {
+            try {
+              return;
+            } finally {
+              ch2Cinematic();
+            }
+          }
+          stageCnt[ 0 ]++;
+        }
+      }
+    });
+  }
+
+  private void ch2Cinematic() {
+    resetAll();
+    frame.add( panel );
+    bgLabel.setIcon( getImageIcon( "ch2/cinematic 1.gif" ) );
+    panel.add( bgLabel );
+    frame.revalidate();
+    setNewSong( "ch2 cinematic song" );
+    Timer timer = new Timer( 500, new ActionListener(){
+      @Override
+      public void actionPerformed( ActionEvent e ) {
+        
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 7000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 2.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 6000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 3.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 6500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 4.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 12500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 5.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 5500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 6.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 7.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 8.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 9.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 10.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 11.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 4500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 12.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 2500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 13.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 14.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 15.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 16.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 5750, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 17.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 6750, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 18.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 2500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 19.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 20.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 21.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 22.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 23.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 24.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 5500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 25.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 2000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 26.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 2750, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 27.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 28.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 29.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 3000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 30.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 6500, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 31.gif" ) );
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 6250, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        bgLabel.setIcon( getImageIcon( "ch2/cinematic 32.gif" ) );
+        Timer t = new Timer( 1000, new ActionListener() {
+          @Override
+          public void actionPerformed( ActionEvent e ) {
+            textArea.setVisible( true );
+            textLabel.setVisible( true );
+            textLabel.setIcon( getImageIcon( "text set 2.png" ) );
+            animateText( "With the Beacon in full view of our heroes, another friend yearns for their aid.\r\n\r\n" + 
+            "A new act is about to begin...", 50 );
+          }
+        });
+        t.setRepeats( false );
+        t.start();
+      }
+    });
+    timer.setRepeats( false );
+    timer.start();
+    timer = new Timer( timer.getDelay() + 14000, new ActionListener() {
+      @Override
+      public void actionPerformed( ActionEvent evt ) {
+        textArea.setVisible( false );
+        textLabel.setIcon( getImageIcon( "text set.png" ) );
+        textArea.setText( null );
+        textLabel.setVisible( false );
+        mediaPlayer.stop();
+        bgLabel.setIcon( getImageIcon( "ch2/chapter2 title.gif" ) );
+        panel.addMouseListener( new MouseAdapter() {
+          @Override
+          public void mouseClicked( MouseEvent e ) {
+            panel.removeMouseListener( this );
+            label = new FadeLabel( "ch2/chapter2 title.gif", "BLACK.gif", 3000 );
+            label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
+            panel.remove( bgLabel );
+            panel.add( label );
+            panel.revalidate();
+            ( ( FadeLabel )label ).fadeImages();
+            Timer t = new Timer( 3100, new ActionListener(){
+              @Override
+              public void actionPerformed( ActionEvent ee ) {
+                try {
+                  return;
+                } finally {
+                  startChapter2();
+                }
+              }
+            });
+            t.setRepeats( false );
+            t.start();
+          }
+        });
       }
     });
     timer.setRepeats( false );
     timer.start();
   }
 
-  private class BossMouseListener extends MouseAdapter {
-    @Override
-    public void mouseClicked( MouseEvent evt ) {
-
-    }
+  private void startChapter2() {
+    resetScreen();
+    frame.add( panel );
+    bgLabel.setIcon( getImageIcon( "BLACK.gif" ) );
+    panel.add( bgLabel );
+    panel.revalidate();
+    textArea.setVisible( true );
+    textLabel.setVisible( true );
+    textArea.setFont( textArea.getFont().deriveFont( Font.ITALIC ) );
+    animateText( "Allan will return in chapter 2\r\n", 75 );
+    panel.addMouseListener( new MouseAdapter() {
+      @Override
+      public void mouseClicked( MouseEvent evt ) {
+        if( animationFinished ) {
+          panel.removeMouseListener( this );
+          initMainMenu();
+        }
+      }
+    });
   }
 
   private void gameOverDialogue( String gameOverBG ) {
@@ -4396,6 +5298,13 @@ public class Game extends javafx.application.Application {
               } finally {
                 beginCave( true );
               }
+            } else if( curStage.equals( "ch1 boss" ) && stageCnt[ 0 ] == 2 ) {
+              System.err.println( "resetting to ch1 boss" );
+              try {
+                return;
+              } finally {
+                ch1Boss();
+              }
             }
           }
         });
@@ -4404,6 +5313,7 @@ public class Game extends javafx.application.Application {
     timer6.setRepeats( false );
     timer6.start();
   }
+
   private void animateText( String text, int time ) {
     final Timer t = new Timer( time, null );
     t.addActionListener( new ActionListener() {
@@ -4812,6 +5722,194 @@ public class Game extends javafx.application.Application {
       }
       firstTime = false;
       g2d.dispose();
+    }
+  }
+
+  @SuppressWarnings( "serial" )
+  private class SlidePuzzleGUI extends JPanel {
+    private GraphicsPanel puzzleGraphics;
+    private SlidePuzzleLogic pLogic = new SlidePuzzleLogic();
+    private final Timer timer;
+    private int timeCounter;
+    private JLabel time, pic, head, name, dSet;
+    private JTextArea dArea;
+    private SpringLayout layout;
+    private boolean paused;
+  
+    public SlidePuzzleGUI() {
+      layout = new SpringLayout();
+      puzzleGraphics = new GraphicsPanel();
+      time = new JLabel( "180", SwingConstants.CENTER );
+      pic = new JLabel( getImageIcon( "exodia pic.png" ) );
+      head = new JLabel( getImageIcon( "Kaiba_head.png" ) );
+      head.setPreferredSize( new Dimension( 150, 150 ) );
+      head.setOpaque( false );
+      head.setVisible( false );
+      name = new JLabel( "Seto Kaiba" );
+      name.setPreferredSize( new Dimension( 200, 40 ) );
+      name.setFont( new Font( "Pixel-Noir", Font.BOLD, 14) );
+      name.setOpaque( false );
+      name.setForeground( Color.WHITE );
+      name.setVisible( false );
+      dSet = new JLabel( getImageIcon( "dialogue set.png" ) );
+      dSet.setVisible( false );
+      dArea = new JTextArea();
+      dArea.setPreferredSize( new Dimension( 850, 100) );
+      dArea.setForeground( new Color( 249, 253, 168 ) );
+      dArea.setOpaque( false );
+      dArea.setBorder( BorderFactory.createEmptyBorder( 5, 0, 0, 15 ) );
+      dArea.setFont( new Font( "Pixel-Noir", Font.PLAIN, 15 ) );
+      dArea.setWrapStyleWord( true );
+      dArea.setLineWrap( true );
+      dArea.setEditable( false );
+      dArea.setFocusable( false );
+      dArea.setVisible( false );
+      time.setFont(new Font( "Pixel-Noir", Font.BOLD, 42 ) );
+      time.setForeground( Color.RED );
+      time.setBackground( Color.BLACK );
+      time.setPreferredSize( new Dimension( 300, 300 ) );
+      timer = new Timer( 1000, null );
+      timer.addActionListener( new ActionListener() {
+        @Override
+        public void actionPerformed( ActionEvent evt ) {
+          time.setText( "" + ( 180 - timeCounter ) );
+          if( ( 180 - timeCounter ) == 60 ) {
+            timeCounter++;
+            paused = true;
+            animationFinished = false;
+            dArea.setVisible( true );
+            dSet.setVisible( true );
+            name.setText( "Seto Kaiba" );
+            name.setVisible( true );
+            head.setIcon( getImageIcon( "Kaiba_head.png" ) );
+            head.setVisible( true );
+            animateText( "Your turn time is running out.\r\n" + 
+            "Draw your last pathetic card, so I can end this!", 35, dArea );
+            SlidePuzzleGUI.this.addMouseListener( new MouseAdapter() {
+              @Override
+              public void mouseClicked( MouseEvent evt ) {
+                if( animationFinished ) {
+                  paused = false;
+                  animationFinished = false;
+                  timer.start();
+                  dArea.setVisible( false );
+                  dArea.setText( null );
+                  dSet.setVisible( false );
+                  head.setVisible( false );
+                  name.setVisible( false );
+                  SlidePuzzleGUI.this.removeMouseListener( this );
+                }
+              }
+            });
+            puzzleGraphics.addMouseListener( new MouseAdapter() {
+              @Override
+              public void mouseClicked( MouseEvent evt ) {
+                if( animationFinished ) {
+                  paused = false;
+                  animationFinished = false;
+                  timer.start();
+                  dArea.setVisible( false );
+                  dArea.setText( null );
+                  dSet.setVisible( false );
+                  head.setVisible( false );
+                  name.setVisible( false );
+                  puzzleGraphics.removeMouseListener( this );
+                }
+              }
+            });
+            timer.stop();
+          }
+
+          if( timeCounter == 180 ) {
+            timeCounter = 0;
+            timer.stop();
+            afterCh1Boss( false );
+          }
+          
+          if( !paused )
+            timeCounter++;
+        }
+      });
+      this.setOpaque( true );
+      this.setBackground( Color.BLACK );
+      this.setLayout( layout );
+      this.add( head );
+      layout.putConstraint( SpringLayout.WEST, head, 185, SpringLayout.WEST, this );
+      layout.putConstraint( SpringLayout.NORTH, head, 560, SpringLayout.NORTH, this );
+      this.add( name );
+      layout.putConstraint( SpringLayout.WEST, name, 350, SpringLayout.WEST, this );
+      layout.putConstraint( SpringLayout.NORTH, name, 575, SpringLayout.NORTH, this );
+      this.add( dArea );
+      layout.putConstraint( SpringLayout.WEST, dArea, 348, SpringLayout.WEST, this );
+      layout.putConstraint( SpringLayout.NORTH, dArea, 618, SpringLayout.NORTH, this );
+      this.add( dSet );
+      layout.putConstraint( SpringLayout.WEST, dSet, 183, SpringLayout.WEST, this );
+      layout.putConstraint( SpringLayout.NORTH, dSet, 563, SpringLayout.NORTH, this );
+      this.add( time );
+      this.add( pic );
+      layout.putConstraint( SpringLayout.EAST, pic, -24, SpringLayout.EAST, this );
+      layout.putConstraint( SpringLayout.SOUTH, pic, -24, SpringLayout.SOUTH, this );
+      this.add( puzzleGraphics );
+      layout.putConstraint( SpringLayout.WEST, puzzleGraphics, 299, SpringLayout.WEST, this );
+    }
+
+    public Timer getTimer() {
+      return timer;
+    }
+  
+    class GraphicsPanel extends JPanel implements MouseListener {
+      private static final int ROWS = 3;
+      private static final int COLS = 3;
+      private static final int CELL_SIZE = 256;
+  
+      public GraphicsPanel() {
+        this.setPreferredSize( new Dimension( ROWS * CELL_SIZE, COLS * CELL_SIZE ) );
+        this.setOpaque( true );
+        this.setBackground( new Color( 0, 0, 64 ) );
+        this.addMouseListener( this );
+      }
+  
+      @Override
+      protected void paintComponent( Graphics g ) {
+        super.paintComponent( g );
+        Graphics2D g2d = ( Graphics2D )g;
+        for( int r = 0; r < ROWS; r++ ) {
+          for( int c = 0; c < COLS; c++ ) {
+            int x = c * CELL_SIZE;
+            int y = r * CELL_SIZE;
+            Image img = pLogic.getImage( r, c );
+            if( img != null ) {
+              g2d.drawImage( img, x, y, null );
+            }
+          }
+        }
+      }
+
+      @Override
+      public void mouseClicked( MouseEvent evt ) {
+        int row = evt.getY() / CELL_SIZE;
+        int col = evt.getX() / CELL_SIZE;
+  
+        if( !paused ) {
+          pLogic.moveTile( row, col );
+          this.repaint();
+          //Toolkit.getDefaultToolkit().beep();
+        }
+
+        if( pLogic.isGameOver() ) {
+          timer.stop();
+          afterCh1Boss( true );
+        }
+      }
+  
+      @Override
+      public void mousePressed( MouseEvent evt ) {}
+      @Override
+      public void mouseReleased( MouseEvent evt ) {}
+      @Override
+      public void mouseEntered( MouseEvent evt ) {}
+      @Override
+      public void mouseExited( MouseEvent evt ) {}
     }
   }
 
