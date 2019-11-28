@@ -5193,6 +5193,7 @@ public class Game extends javafx.application.Application {
     resetScreen();
     curStage = "gatekeeper";
     dialogueLabel.setIcon( getImageIconCh2( "dialogue set 2.png" ) );
+    textLabel.setIcon( getImageIconCh2( "text set 2.png" ) );
     frame.add( panel );
     bgLabel.setIcon( getImageIconCh2( "gate 1.gif" ) );
     panel.add( choice1 );
