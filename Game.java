@@ -6229,9 +6229,17 @@ public class Game extends javafx.application.Application {
 
   private class LabyrinthMouseListener extends MouseAdapter implements ActionListener {
     private int stamina;
+    private String correctCode;
+    private final String [] forestCodes;
+    private final String [] jungleCodes;
+    private final String [] swampCodes;
 
     public LabyrinthMouseListener() {
       stamina = 30;
+      forestCodes = new String []{ "32785", "91246", "06547", "03761", "68954", "47986", "58912", "12470" };
+      jungleCodes = new String []{ "N9TT-9G0A", "B7FQ-RANC", "QK6A-JI6S", "7ETR-0A6C", "SXFP-CHYK", "ONI6-S89U", "XNSS-HSJW", "3NGU-8XTJ" };
+      swampCodes = new String []{ "Azazer!", "Asozul!", "Aviges!", "Akesel!", "Apajus!", "Aboqor!", "Abipuc!", "Adujor!" };
+
       choice1.addActionListener( this );
       choice2.addActionListener( this );
       choice3.addActionListener( this );
@@ -6321,7 +6329,7 @@ public class Game extends javafx.application.Application {
           } );
           timer.setRepeats( false );
           timer.start();
-        } else if( stageCnt[ 0 ] == 7 ) {
+        } else if( stageCnt[ 0 ] == 8 ) {
           bgLabel.setIcon( getImageIconCh2( "lab lose 1.gif" ) );
           setNewSong( "ch2/lab lose song" );
           versatileLabel1.setVisible( false );
@@ -6344,11 +6352,11 @@ public class Game extends javafx.application.Application {
           } );
           timer.setRepeats( false );
           timer.start();
-        } else if( stageCnt[ 0 ] == 8 ) {
+        } else if( stageCnt[ 0 ] == 9 ) {
           headLabel.setIcon( allanHeadImage );
           nameLabel.setText( "Allan" );
           animateText( "You're right!\r\nThe sun has turned red!\r\nWhat's going on???", 35, dialogueArea );
-        } else if( stageCnt[ 0 ] == 9 ) {
+        } else if( stageCnt[ 0 ] == 10 ) {
           bgLabel.setIcon( getImageIconCh2( "lab lose 2.gif" ) );
           dialogueArea.setVisible( false );
           dialogueLabel.setVisible( false );
@@ -6366,19 +6374,19 @@ public class Game extends javafx.application.Application {
           } );
           timer.setRepeats( false );
           timer.start();
-        } else if( stageCnt[ 0 ] == 10 ) {
+        } else if( stageCnt[ 0 ] == 11 ) {
           headLabel.setIcon( getImageIconCh2( "Itachi_head.png" ) );
           nameLabel.setText( "Itachi" );
           animateText( "So I've finally caught up to you intrusive infants.\r\nHand over your stones and no one gets hurt!", 35, dialogueArea );
-        } else if( stageCnt[ 0 ] == 11 ) {
+        } else if( stageCnt[ 0 ] == 12 ) {
           headLabel.setIcon( allanHeadImage );
           nameLabel.setText( "Allan" );
           animateText( "Nah. Bug off!\r\nWe'll do nothing of the sort.", 35, dialogueArea );
-        } else if( stageCnt[ 0 ] == 12 ) {
+        } else if( stageCnt[ 0 ] == 13 ) {
           headLabel.setIcon( getImageIconCh2( "Itachi_head.png" ) );
           nameLabel.setText( "Itachi" );
           animateText( "Very well.\r\nLet's see if you can survive the Uchiha clan's signature fireball technique.", 35, dialogueArea );
-        } else if( stageCnt[ 0 ] == 13 ) {
+        } else if( stageCnt[ 0 ] == 14 ) {
           panel.removeMouseListener( this );
           bgLabel.setIcon( getImageIconCh2( "lab lose 3.gif" ) );
           dialogueArea.setVisible( false );
@@ -6437,7 +6445,26 @@ public class Game extends javafx.application.Application {
           } );
           timer.setRepeats( false );
           timer.start();
-        } else if( stageCnt[ 0 ] == 15 ) {
+        } else if( stageCnt[ 0 ] == 16 ) {
+          bgLabel.setIcon( getImageIconCh2( "forest 1 transition.gif" ) );
+          dialogueLabel.setVisible( false );
+          dialogueArea.setVisible( false );
+          dialogueArea.setText( null );
+          headLabel.setVisible( false );
+          nameLabel.setVisible( false );
+          Timer timer = new Timer( 1000, new ActionListener(){
+            @Override
+            public void actionPerformed( ActionEvent evt ) {
+              textArea.setVisible( true );
+              textLabel.setVisible( true );
+              animateText( "Many leaves and thorn brushes dot the windy, shallow paths of the forest.\r\n" +
+              "Progress towards the light has been hindered.\r\n-10 Stamina", 35 );
+              updateStamina( -10 );
+            }
+          } );
+          timer.setRepeats( false );
+          timer.start();
+        } else if( stageCnt[ 0 ] == 17 ) {
           bgLabel.setIcon( getImageIconCh2( "forest 1.gif" ) );
           textArea.setVisible( false );
           textLabel.setVisible( false );
@@ -6460,11 +6487,26 @@ public class Game extends javafx.application.Application {
           timer = new Timer( timer.getDelay() + 4000, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent evt ) {
-              // buttons
+              choice4.setIcon( getImageIconCh2( "swim_button.png" ) );
+              choice4.setRolloverIcon( getImageIconCh2( "swim_button h.png" ) );
+              choice1.setIcon( getImageIconCh2( "look_upstream_button.png" ) );
+              choice1.setRolloverIcon( getImageIconCh2( "look_upstream_button h.png" ) );
+              choice2.setIcon( getImageIconCh2( "look_downstream_button.png" ) );
+              choice2.setRolloverIcon( getImageIconCh2( "look_downstream_button h.png" ) );
+              choice3.setIcon( getImageIconCh2( "jump_across_button.png" ) );
+              choice3.setRolloverIcon( getImageIconCh2( "jump_across_button h.png" ) );
+              choice1.setVisible( true );
+              choice2.setVisible( true );
+              choice3.setVisible( true );
+              choice4.setVisible( true );
             }
           } );
           timer.setRepeats( false );
           timer.start();
+        } else if( stageCnt[ 0 ] == 19 ) {
+          textArea.setText( null );
+          bgLabel.setIcon( getImageIconCh2( "forest 2.gif") );
+          animateText( "After traveling a while, the duo once again finds themselves trapped between a rock and a hard place....", 35 );
         }
         stageCnt[ 0 ]++;
       }
@@ -6484,21 +6526,69 @@ public class Game extends javafx.application.Application {
       dialogueLabel.setVisible( false );
       headLabel.setVisible( false );
       nameLabel.setVisible( false );
+      animationFinished = false;
       if( stageCnt[ 0 ] == 6 && e.getSource().equals( choice1 ) ) { // forest
-        bgLabel.setIcon( getImageIconCh2( "forest 1 transition.gif" ) );
-        Timer timer = new Timer( 1000, new ActionListener(){
-          @Override
+        // generate correct code from forest codes
+        correctCode = forestCodes[ (int)(Math.random() * forestCodes.length) ];
+
+        Timer timer = new Timer( 1000, new ActionListener() {
           public void actionPerformed( ActionEvent evt ) {
-            textArea.setVisible( true );
-            textLabel.setVisible( true );
-            animateText( "Many leaves and thorn brushes dot the windy, shallow paths of the forest.\r\n" +
-            "Progress towards the light has been hindered.\r\n-10 Stamina", 35 );
-            updateStamina( -10 );
+            dialogueArea.setVisible( true );
+            dialogueLabel.setVisible( true );
+            headLabel.setVisible( true );
+            nameLabel.setVisible( true );
+            headLabel.setIcon( getImageIcon( "Rudy_head.png" ) );
+            nameLabel.setText( "Rudy" );
+            animateText( "Alright the code for forest should be... " + correctCode, 35, dialogueArea );
           }
         } );
         timer.setRepeats( false );
         timer.start();
-        stageCnt[ 0 ] = 15; // forest arc
+        stageCnt[ 0 ] = 16; // forest arc
+      } else if( stageCnt[ 0 ] == 18 ) {
+        if( e.getSource().equals( choice4 ) ) { // swim
+          Timer timer = new Timer( 1000, new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent evt ) {
+              textArea.setVisible( true );
+              textLabel.setVisible( true );
+              animateText( "Allan and Rudy easily swim across the river with ease thanks to their vast experience of " +
+              "swimming the waves of Huntington. The water reinvigorates the duo.\r\n+5 stamina", 35 );
+              updateStamina( 5 );
+              stageCnt[ 0 ] = 19;
+            }
+          } );
+          timer.setRepeats( false );
+          timer.start();
+        } else if( e.getSource().equals( choice1 ) ) { // look upstream (death)
+
+        } else if( e.getSource().equals( choice2 ) ) { // look downstream
+          Timer timer = new Timer( 1000, new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent evt ) {
+              textArea.setVisible( true );
+              textLabel.setVisible( true );
+              animateText( "After traversing harsh terrain, Allan spots a couple of stones conforming together to form a land " +
+              "bridge which allows them to cross safely. Lucky!\r\n-5 stamina", 35 );
+              updateStamina( -5 );
+              stageCnt[ 0 ] = 19;
+            }
+          } );
+          timer.setRepeats( false );
+          timer.start();
+        } else if( e.getSource().equals( choice3 ) ) { // jump across
+          Timer timer = new Timer( 1000, new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent evt ) {
+              textArea.setVisible( true );
+              textLabel.setVisible( true );
+              animateText( "The duo easily jump over the river. Well... that was easier done than said.\r\n-0 stamina", 35 );
+              stageCnt[ 0 ] = 19;
+            }
+          } );
+          timer.setRepeats( false );
+          timer.start();
+        }
       }
     }
     
