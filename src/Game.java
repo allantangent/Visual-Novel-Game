@@ -6233,6 +6233,7 @@ public class Game extends javafx.application.Application {
     private final String [] forestCodes;
     private final String [] jungleCodes;
     private final String [] swampCodes;
+    private boolean instantDeath = false;
 
     public LabyrinthMouseListener() {
       stamina = 30;
@@ -6449,7 +6450,6 @@ public class Game extends javafx.application.Application {
           bgLabel.setIcon( getImageIconCh2( "forest 1 transition.gif" ) );
           dialogueLabel.setVisible( false );
           dialogueArea.setVisible( false );
-          dialogueArea.setText( null );
           headLabel.setVisible( false );
           nameLabel.setVisible( false );
           Timer timer = new Timer( 1000, new ActionListener(){
@@ -6504,9 +6504,98 @@ public class Game extends javafx.application.Application {
           timer.setRepeats( false );
           timer.start();
         } else if( stageCnt[ 0 ] == 19 ) {
-          textArea.setText( null );
-          bgLabel.setIcon( getImageIconCh2( "forest 2.gif") );
-          animateText( "After traveling a while, the duo once again finds themselves trapped between a rock and a hard place....", 35 );
+          if( !instantDeath ) {
+            textArea.setText( null );
+            bgLabel.setIcon( getImageIconCh2( "forest 2.gif") );
+            animateText( "After traveling a while, the duo once again finds themselves trapped between a rock and a hard place....", 35 );
+          } else {
+            bgLabel.setIcon( getImageIconCh2( "forest 3 lose.gif" ) );
+            textArea.setVisible( false );
+            textLabel.setVisible( false );
+            Timer timer = new Timer( 1000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                headLabel.setVisible( true );
+                headLabel.setIcon( allanHeadImage );
+                nameLabel.setVisible( true );
+                nameLabel.setText( "Allan" );
+                animateText( "Look Rudy! A blue buff sentinel!\r\nRudy??? Where'd ya go??\r\nUH OH!", 35, dialogueArea );
+              }
+            } );
+            timer.setRepeats( false );
+            timer.start();
+          }
+        } else if( stageCnt[ 0 ] == 20 ) {
+          if( !instantDeath ) {
+            textArea.setVisible( false );
+            textLabel.setVisible( false );
+            bgLabel.setIcon( getImageIconCh2( "forest 3.gif" ) );
+            Timer timer = new Timer( 1000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                dialogueArea.setVisible( true );
+                dialogueLabel.setVisible( true );
+                headLabel.setVisible( true );
+                headLabel.setIcon( getImageIconCh2( "Snorlax_head.png" ) );
+                nameLabel.setVisible( true );
+                nameLabel.setText( "Snorlax" );
+                animateText( "Snoree Snoree lax?", 35, dialogueArea );
+              }
+            } );
+            timer.setRepeats( false );
+            timer.start();
+          } else {
+            panel.removeMouseListener( this );
+            bgLabel.setIcon( getImageIconCh2( "forest 3.1 lose.gif" ) );
+            versatileLabel1.setVisible( false );
+            versatileLabel2.setVisible( false );
+            dialogueArea.setVisible( false );
+            dialogueLabel.setVisible( false );
+            headLabel.setVisible( false );
+            nameLabel.setVisible( false );
+            Timer timer = new Timer( 3000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                mediaPlayer.stop();
+                label = new FadeLabel( "ch2/forest 3.1 lose.gif", "BLACK.gif", 2000 );
+                label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
+                panel.remove( bgLabel );
+                panel.add( label );
+                panel.revalidate();
+                ( ( FadeLabel )label ).fadeImages();
+              }
+            } );
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 2100, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                panel.remove( label );
+                label = new FadeLabel( "BLACK.gif", "chapter2 defeat.gif", 2000 );
+                label.setPreferredSize( new Dimension( FRAME_WIDTH, FRAME_HEIGHT ) );
+                panel.add( label );
+                panel.revalidate();
+                ( ( FadeLabel)label ).fadeImages();
+                gameOverDialogue( "chapter2 defeat.gif" );
+              }
+            } );
+            timer.setRepeats( false );
+            timer.start();
+          }
+        } else if( stageCnt[ 0 ] == 21 ) {
+          headLabel.setIcon( getImageIcon( "Rudy_head.png" ) );
+          nameLabel.setText( "Rudy" );
+          animateText( "Do something bruh!\r\nAt this rate, our pursuer will catch us!", 35, dialogueArea );
+          Timer timer = new Timer( 4000, new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent evt ) {
+              
+            }
+          } );
+        } else if( stageCnt[ 0 ] == 22 ) {
+
         }
         stageCnt[ 0 ]++;
       }
@@ -6561,7 +6650,19 @@ public class Game extends javafx.application.Application {
           timer.setRepeats( false );
           timer.start();
         } else if( e.getSource().equals( choice1 ) ) { // look upstream (death)
-
+          instantDeath = true;
+          Timer timer = new Timer( 1000, new ActionListener() {
+            @Override
+            public void actionPerformed( ActionEvent evt ) {
+              textArea.setVisible( true );
+              textLabel.setVisible( true );
+              animateText( "After hiking a mile up the hill, the duo reach the opening to a cave... After entering, a stone golem is there " +
+              "to meet the adventurers. It doesn't look too kind....", 35 );
+              stageCnt[ 0 ] = 19;
+            }
+          } );
+          timer.setRepeats( false );
+          timer.start();
         } else if( e.getSource().equals( choice2 ) ) { // look downstream
           Timer timer = new Timer( 1000, new ActionListener() {
             @Override
