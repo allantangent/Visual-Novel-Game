@@ -6505,9 +6505,10 @@ public class Game extends javafx.application.Application {
           timer.start();
         } else if( stageCnt[ 0 ] == 19 ) {
           if( !instantDeath ) {
+            updateStamina( -5 );
             textArea.setText( null );
             bgLabel.setIcon( getImageIconCh2( "forest 2.gif") );
-            animateText( "After traveling a while, the duo once again finds themselves trapped between a rock and a hard place....", 35 );
+            animateText( "After traveling a while, the duo once again finds themselves trapped between a rock and a hard place....\r\n-5 Stamina", 35 );
           } else {
             bgLabel.setIcon( getImageIconCh2( "forest 3 lose.gif" ) );
             textArea.setVisible( false );
@@ -6587,15 +6588,75 @@ public class Game extends javafx.application.Application {
         } else if( stageCnt[ 0 ] == 21 ) {
           headLabel.setIcon( getImageIcon( "Rudy_head.png" ) );
           nameLabel.setText( "Rudy" );
-          animateText( "Do something bruh!\r\nAt this rate, our pursuer will catch us!", 35, dialogueArea );
+          animateText( "Do something bruh!\r\nAt this rate, our pursuer will catch us!", 35, dialogueArea, false );
           Timer timer = new Timer( 4000, new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent evt ) {
-              
+              choice1.setIcon( getImageIcon( "greet.png" ) );
+              choice1.setRolloverIcon( getImageIcon( "greetH.png" ) );
+              choice2.setIcon( getImageIcon( "passive.png" ) );
+              choice2.setRolloverIcon( getImageIcon( "passiveH.png" ) );
+              choice3.setIcon( getImageIcon( "nast.png" ) );
+              choice3.setRolloverIcon( getImageIcon( "nastH.png" ) );
+              choice1.setVisible( true );
+              choice2.setVisible( true );
+              choice3.setVisible( true );
             }
           } );
-        } else if( stageCnt[ 0 ] == 22 ) {
-
+          timer.setRepeats( false );
+          timer.start();
+        } else if( stageCnt[ 0 ] == 23 ) {
+          dialogueArea.setText( null );
+          dialogueArea.setVisible( false );
+          dialogueLabel.setVisible( false );
+          headLabel.setVisible( false );
+          nameLabel.setVisible( false );
+          textArea.setVisible( true );
+          textLabel.setVisible( true );
+          if( choiceNum == 1 ) {
+            bgLabel.setIcon( getImageIconCh2( "forest 3.1.gif" ) );
+            updateStamina( -10 );
+            animateText( "After giving Snorlax some shrooms, the large Pokemon falls asleep... Many hours are wasted trying to go " +
+            "around the large fellow without getting injured.\r\n-10 Stamina", 35 );
+          } else if( choiceNum == 2 ) {
+            bgLabel.setIcon( getImageIconCh2( "forest 3.1.gif" ) );
+            updateStamina( -5 );
+            animateText( "Snorlax takes a brisk power nap and leaves after just a few short minutes.\r\n-5 Stamina", 35 );
+          } else if( choiceNum == 3 ) {
+            bgLabel.setIcon( getImageIconCh2( "forest 3.2.gif" ) );
+            animateText( "Snorlax doesn't understand Allan's words but realizes that Allan is just a nuisance. He leaves due to " +
+            "Allan's uninspiring nature.\r\n-0 Stamina", 35 );
+          }
+        } else if( stageCnt[ 0 ] == 24 ) {
+          if( checkStaminaLoss() ) {
+            bgLabel.setIcon( getImageIconCh2( "forest 4.gif" ) );
+            textArea.setVisible( false );
+            textLabel.setVisible( false );
+            Timer timer = new Timer( 1000, new ActionListener() {
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                textArea.setVisible( true );
+                textLabel.setVisible( true );
+                animateText( "Our adventurers have reached a patch of fertile land.\r\nShould they settle for some grab and go berries " +
+                "for a light snack?\r\nOr should they attempt to fish and obtain some needed sustenance?", 35, textArea, false );
+              }
+            } );
+            timer.setRepeats( false );
+            timer.start();
+            timer = new Timer( timer.getDelay() + 4000, new ActionListener() { // TODO: update forage buttons
+              @Override
+              public void actionPerformed( ActionEvent evt ) {
+                choice1.setIcon( getImageIconCh2( "forage button.png" ) );
+                choice1.setRolloverIcon( getImageIconCh2( "forage button h.png" ) );
+                choice2.setIcon( getImageIconCh2( "fish button.png" ) );
+                choice2.setRolloverIcon( getImageIconCh2( "fish button h.png" ) );
+                choice1.setVisible( true );
+                choice2.setVisible( true );
+              }
+            } );
+            timer.setRepeats( false );
+            timer.start();
+          }
         }
         stageCnt[ 0 ]++;
       }
@@ -6617,6 +6678,7 @@ public class Game extends javafx.application.Application {
       nameLabel.setVisible( false );
       animationFinished = false;
       if( stageCnt[ 0 ] == 6 && e.getSource().equals( choice1 ) ) { // forest
+        setNewSong( "ch2/lab forest song" );
         // generate correct code from forest codes
         correctCode = forestCodes[ (int)(Math.random() * forestCodes.length) ];
 
@@ -6690,6 +6752,24 @@ public class Game extends javafx.application.Application {
           timer.setRepeats( false );
           timer.start();
         }
+      } else if ( stageCnt[ 0 ] == 22 )  { // snorlax
+        dialogueArea.setVisible( true );
+        dialogueLabel.setVisible( true );
+        nameLabel.setVisible( true );
+        nameLabel.setText( "Allan" );
+        headLabel.setVisible( true );
+        headLabel.setIcon( allanHeadImage );
+        if( e.getSource().equals( choice1 ) ) { // friendly greet
+          choiceNum = 1;
+          animateText( "Please Mr. Snorlax sir!\r\nI'll give you some tasty treats if you move!", 35, dialogueArea );
+        } else if( e.getSource().equals( choice2 ) ) { // passive approach
+          choiceNum = 2;
+          animateText( "Let us pass bro...\r\nWe're kinda in a hurry!", 35, dialogueArea );
+        } else if( e.getSource().equals( choice3 ) ) { // nast scoff
+          choiceNum = 3;
+          animateText( "Move it Tubbo sheesh!\r\nDontcha got some berries to eat or sumtin?", 35, dialogueArea );
+        }
+        stageCnt[ 0 ] = 23;
       }
     }
     
@@ -6730,6 +6810,9 @@ public class Game extends javafx.application.Application {
     }
     private boolean checkStaminaLoss() {
       if( stamina <= 0 ) {
+        textArea.setVisible( false );
+        textArea.setText( null );
+        textLabel.setVisible( false );
         headLabel.setIcon( getImageIcon( "Rudy_head.png" ) );
         nameLabel.setText( "Rudy" );
         dialogueArea.setVisible( true );
@@ -6743,7 +6826,7 @@ public class Game extends javafx.application.Application {
             headLabel.setIcon( allanHeadImage );
             nameLabel.setText( "Allan" );
             animateText( "Come on man we're almost there!", 35, dialogueArea );
-            stageCnt[ 0 ] = 7;
+            stageCnt[ 0 ] = 8;
           }
         } );
         timer.setRepeats( false );
